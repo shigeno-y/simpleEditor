@@ -1,0 +1,18 @@
+{
+    "Plugins": [
+        {
+            "Type": "python",
+            "Name": "simpleEditor",
+            "Info": {
+                "Types": {
+                    "simpleEditor.SimpleEditorPluginContainer": {
+                        "bases": [
+                            "pxr.Usdviewq.plugin.PluginContainer"
+                        ],
+                        "displayName": "Simple Editor"
+                    }
+                }
+            }
+        }
+    ]
+}

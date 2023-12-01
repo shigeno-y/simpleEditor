@@ -182,7 +182,6 @@ class KeyValueWidget(QWidget):
         self._currentPrim = None
 
     def update(self, prim, currentTime):
-        print(self._currentPrim is None, self._currentPrim != prim.GetPath())
         if self._currentPrim is None or self._currentPrim != prim.GetPath():
             self._currentPrim = prim.GetPath()
             if self._widget is not None:
@@ -236,6 +235,7 @@ class SimpleEditWindow(QMainWindow):
         self.installEventFilter(self)
 
         self.__api = usdviewApi
+        self.__title = "Simple Editor"
 
     def eventFilter(self, watched, event: QEvent) -> bool:
         if event.type() == QEvent.WindowActivate:
@@ -243,6 +243,10 @@ class SimpleEditWindow(QMainWindow):
         return super().eventFilter(watched, event)
 
     def update(self, prim, time):
+        newPrimPath = str(prim.GetPath())
+        if self.__title != newPrimPath:
+            self.__title = newPrimPath
+            self.setWindowTitle(self.__title)
         self.__widget.update(prim, time)
 
 

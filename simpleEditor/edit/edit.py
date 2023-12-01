@@ -4,6 +4,7 @@ from PySide2.QtWidgets import (
     QWidget,
     QLabel,
     QVBoxLayout,
+    QScrollArea,
     QHBoxLayout,
     QLineEdit,
     QDoubleSpinBox,
@@ -120,16 +121,23 @@ class KeyValueWidget(QWidget):
 
 
 __window = None
+__scroll = None
 __widget = None
 
 
 def edit(usdviewApi):
     global __window
+    global __scroll
     global __widget
     if __window is None:
         __window = QMainWindow()
+
+        __scroll = QScrollArea(__window)
+        __scroll.setWidgetResizable(True)
+        __window.setCentralWidget(__scroll)
+
         __widget = KeyValueWidget(__window, usdviewApi=usdviewApi)
-        __window.setCentralWidget(__widget)
+        __scroll.setWidget(__widget)
     __window.show()
 
     if __widget is not None:

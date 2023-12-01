@@ -1,0 +1,4 @@
+/hooks export-ignore
+/.* export-ignore
+/conanfile.py export-ignore
+/pip-requirements.txt export-ignore

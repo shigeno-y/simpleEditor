@@ -1,3 +1,4 @@
+from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QFormLayout,
     QWidget,
@@ -26,6 +27,7 @@ class KeyValueWidget(QWidget):
                 self._widget.deleteLater()
             self._widget = QWidget(self)
             self._layout = QFormLayout(self._widget)
+            self._layout.setLabelAlignment(Qt.AlignRight)
             self._uiWidgets = list()
 
             bold_font = self.font()
@@ -41,7 +43,11 @@ class KeyValueWidget(QWidget):
                 baseName = attr.GetBaseName()
                 if namespace != currentNamespace:
                     label = QLabel(namespace, self._widget)
-                    label.setStyleSheet("border: none; border-bottom: 1px solid black;")
+                    label.setMinimumHeight(38)
+                    label.setAlignment(Qt.AlignLeft | Qt.AlignBottom)
+                    label.setStyleSheet(
+                        "border: none; border-bottom: 1px solid #666666;"
+                    )
                     label.setFont(bold_font)
                     self._layout.addRow(label)
                     currentNamespace = namespace

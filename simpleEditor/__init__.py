@@ -2,30 +2,16 @@ from pxr import Tf
 from pxr.Usdviewq.plugin import PluginContainer
 
 
-def printMessage(usdviewApi):
-    print("Hello, World!")
-
-
-def showTurntableUI(usdviewApi):
-    from roah_tools.turntable import main as turntableMain
-
-    turntableMain(usdviewApi)
-
-
 class SimpleEditorPluginContainer(PluginContainer):
     def registerPlugins(self, plugRegistry, usdviewApi):
-        self._printMessage = plugRegistry.registerCommandPlugin(
-            "roah_tools.PrintMessage", "[TUTORIAL] Print Message", printMessage
-        )
-
-        self._turntable = plugRegistry.registerCommandPlugin(
-            "roah_tools.ShowTurntableUI", "Show Turntable UI", showTurntableUI
+        edit = self.deferredImport(".edit")
+        self._edit = plugRegistry.registerCommandPlugin(
+            "SimpleEditor.edit", "Edit Prim", edit.edit
         )
 
     def configureView(self, plugRegistry, plugUIBuilder):
-        roahToolsMenu = plugUIBuilder.findOrCreateMenu("RoahTools")
-        roahToolsMenu.addItem(self._printMessage)
-        roahToolsMenu.addItem(self._turntable)
+        simpleEditorMenu = plugUIBuilder.findOrCreateMenu("SimpleEditor")
+        simpleEditorMenu.addItem(self._edit)
 
 
 Tf.Type.Define(SimpleEditorPluginContainer)

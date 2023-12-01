@@ -59,25 +59,16 @@ class SimpleEditWindow(QMainWindow):
             "USD File (*.usd *.usda)",
         )
 
-        # copied from
-        # https://github.com/PixarAnimationStudios/OpenUSD/blob/0b18ad3f840c24eb25e16b795a5b0821cf05126e/pxr/usdImaging/usdviewq/appController.py#L2834
-        rootLayer = self.__api.dataModel.stage.GetRootLayer()
-        self.__api.dataModel.stage.GetSessionLayer().Export(
-            filename, "Simple Editor, save program is almost UsdView"
-        )
-        targetLayer = Sdf.Layer.FindOrOpen(filename)
-        UsdUtils.CopyLayerMetadata(rootLayer, targetLayer, skipSublayers=True)
+        layer1 = self.__api.stage.GetSessionLayer()
+        layer2 = self.__api.stage.GetRootLayer()
 
-        # We don't ever store self.realStartTimeCode or
-        # self.realEndTimeCode in a layer, so we need to author them
-        # here explicitly.
-        if self.__api.stage.HasAuthoredMetadata("startTimeCode"):
-            targetLayer.startTimeCode = self.__api.stage.GetStartTimeCode()
-        if self.__api.stage.HasAuthoredMetadata("endTimeCode"):
-            targetLayer.endTimeCode = self.__api.stage.GetEndTimeCode()
+        flatten_layer = Sdf.Layer.CreateAnonymous()
+        flatten_layer.TransferContent(layer1)
 
-        targetLayer.subLayerPaths.append(
-            self.__api.dataModel.stage.GetRootLayer().realPath
-        )
-        targetLayer.RemoveInertSceneDescription()
-        targetLayer.Save()
+        UsdUtils.StitchLayers(flatten_layer, layer2)
+
+        flatten_layer.subLayerPaths.clear()
+        for p in layer2.subLayerPaths:
+            flatten_layer.subLayerPaths.append(p)
+
+        flatten_layer.Export(filename)

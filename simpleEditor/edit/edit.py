@@ -114,7 +114,7 @@ class KeyValueWidget(QWidget):
             if hasattr(widget, "setAttr"):
                 widget.setAttr(attr)
             elif hasattr(widget, "setValue"):
-                widget.setValue(attr.Get())
+                widget.setValue(attr.Get(self.__api.frame.GetValue()))
             self._layout.addRow(baseName, widget)
 
         self.layout().addWidget(self._widget)

@@ -5,10 +5,11 @@ from PySide2.QtGui import QIcon
 from PySide2.QtCore import QEvent
 from PySide2.QtWidgets import (
     QMainWindow,
+    QWidget,
     QScrollArea,
     QFileDialog,
     QPushButton,
-    QFormLayout,
+    QVBoxLayout,
     QStyle,
 )
 
@@ -18,20 +19,22 @@ from . import KeyValueWidget
 class SimpleEditWindow(QMainWindow):
     def __init__(self, parent=None, *args, usdviewApi, **kwargs):
         super().__init__(*args, **kwargs)
+        self.__rootWidget = QWidget(self)
+        self.setCentralWidget(self.__rootWidget)
+        self.__layout = QVBoxLayout(self.__rootWidget)
 
-        self.__scroll = QScrollArea(self)
-        self.__scroll.setWidgetResizable(True)
-        self.setCentralWidget(self.__scroll)
-
-        self.__layout = QFormLayout(self.__scroll)
-        self.__save_as_button = QPushButton("Save as")
+        self.__save_as_button = QPushButton("Save as", self.__rootWidget)
         self.__save_as_button.setIcon(
             QIcon(self.style().standardIcon(QStyle.SP_DialogSaveButton))
         )
         self.__save_as_button.clicked.connect(self.handler_SaveAs)
-        self.__layout.addRow("Save as", self.__save_as_button)
+        self.__layout.addWidget(self.__save_as_button)
 
-        self.__widget = KeyValueWidget.KeyValueWidget(self)
+        self.__scroll = QScrollArea(self)
+        self.__scroll.setWidgetResizable(True)
+        self.__layout.addWidget(self.__scroll)
+
+        self.__widget = KeyValueWidget.KeyValueWidget(self.__scroll)
         self.__scroll.setWidget(self.__widget)
 
         self.installEventFilter(self)

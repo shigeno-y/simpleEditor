@@ -61,6 +61,8 @@ class SimpleEditWindow(QMainWindow):
             str(Path(self.__api.stage.GetLayerStack()[-1].realPath).parent),
             "USD File (*.usd *.usda)",
         )
+        if not filename:
+            return
 
         layer1 = self.__api.stage.GetSessionLayer()
         layer2 = self.__api.stage.GetRootLayer()

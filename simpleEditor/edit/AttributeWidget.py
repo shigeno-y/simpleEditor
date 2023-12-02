@@ -12,15 +12,19 @@ from .PropertyEditWidgets import (
     TokenWidget,
     BoolWidget,
     FloatWidget,
+    Float2Widget,
+    Float3Widget,
+    Float4Widget,
+    IntWidget,
     UnsupportedAttributeWidget,
 )
 
 _type2widget = {
     Sdf.ValueTypeNames.Float: FloatWidget,
-    # Sdf.ValueTypeNames.Float2: WidgetFloat2,
-    # Sdf.ValueTypeNames.Float3: WidgetFloat3,
-    # Sdf.ValueTypeNames.Float4: WidgetFloat4,
-    # Sdf.ValueTypeNames.Int: QSpinBox,
+    Sdf.ValueTypeNames.Float2: Float2Widget,
+    Sdf.ValueTypeNames.Float3: Float3Widget,
+    Sdf.ValueTypeNames.Float4: Float4Widget,
+    Sdf.ValueTypeNames.Int: IntWidget,
     Sdf.ValueTypeNames.String: StringWidget,
     Sdf.ValueTypeNames.Token: TokenWidget,
     Sdf.ValueTypeNames.Bool: BoolWidget,

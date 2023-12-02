@@ -1,9 +1,7 @@
 # SPDX-License-Identifier: usdMMDPlugins-LICENSE-1
 
-from pathlib import Path
-
 from conans import ConanFile
-from conan.tools.env import Environment
+from conan.tools.env import VirtualRunEnv
 
 
 class SimpleEditorDevConan(ConanFile):
@@ -26,31 +24,23 @@ class SimpleEditorDevConan(ConanFile):
     }
 
     def requirements(self):
-        self.requires(f"openusd/{self.options.USD}")
+        self.requires("usdmmdplugins/[*]")
 
     def config_options(self):
+        self.options["usdmmdplugins"].USD = self.options.USD
+        self.options["usdmmdplugins"].build_tools = True
+        self.options["usdmmdplugins"].enable_physic_bake = True
+        self.options["usdmmdplugins"].python = True
         self.options["openusd"].python = True
 
     def generate(self):
-        env = Environment()
+        runenv = VirtualRunEnv(self)
+        env = runenv.environment()
 
-        env.define("PXR_PLUGINPATH_NAME", self.recipe_folder)
+        env.prepend_path("PXR_PLUGINPATH_NAME", self.recipe_folder)
         env.prepend_path("PYTHONPATH", self.recipe_folder)
 
         env.define("TF_DEBUG", "PLUG*")
-
-        for require, dependency in self.dependencies.items():
-            bin = Path(dependency.package_path) / "bin"
-            if bin.exists():
-                env.prepend_path("PATH", str(bin))
-
-            lib = Path(dependency.package_path) / "lib"
-            if lib.exists():
-                env.prepend_path("PATH", str(lib))
-
-            pythonpath = Path(dependency.package_path) / "lib" / "python"
-            if pythonpath.exists():
-                env.prepend_path("PYTHONPATH", str(pythonpath))
 
         envvars = env.vars(self, scope="run")
         envvars.save_script("run_env")

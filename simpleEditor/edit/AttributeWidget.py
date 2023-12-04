@@ -1,34 +1,27 @@
 from pxr import Sdf
 from PySide2.QtWidgets import (
-    QWidget,
-    QHBoxLayout,
-    QToolButton,
-    QMenu,
     QAction,
+    QHBoxLayout,
+    QMenu,
+    QToolButton,
+    QWidget,
 )
 
+from .PropertyEdit import AssetWidget, ColorPickerWidget
 from .PropertyEditWidgets import (
-    StringWidget,
-    TokenWidget,
     BoolWidget,
-    FloatWidget,
     Float2Widget,
     Float3Widget,
     Float4Widget,
+    FloatWidget,
     IntWidget,
+    StringWidget,
+    TokenWidget,
     UnsupportedAttributeWidget,
 )
 
 _type2widget = {
-    Sdf.ValueTypeNames.Float: FloatWidget,
-    Sdf.ValueTypeNames.Float2: Float2Widget,
-    Sdf.ValueTypeNames.Float3: Float3Widget,
-    Sdf.ValueTypeNames.Float4: Float4Widget,
-    Sdf.ValueTypeNames.Int: IntWidget,
-    Sdf.ValueTypeNames.String: StringWidget,
-    Sdf.ValueTypeNames.Token: TokenWidget,
-    Sdf.ValueTypeNames.Bool: BoolWidget,
-    Sdf.ValueTypeNames.Color3f: Float3Widget,
+    Sdf.ValueTypeNames.Asset: AssetWidget, Sdf.ValueTypeNames.Float: FloatWidget, Sdf.ValueTypeNames.Float2: Float2Widget, Sdf.ValueTypeNames.Float3: Float3Widget, Sdf.ValueTypeNames.Float4: Float4Widget, Sdf.ValueTypeNames.Int: IntWidget, Sdf.ValueTypeNames.String: StringWidget, Sdf.ValueTypeNames.Token: TokenWidget, Sdf.ValueTypeNames.Bool: BoolWidget, Sdf.ValueTypeNames.Color3f: ColorPickerWidget,
 }
 
 
@@ -37,13 +30,15 @@ class AttributeWidget(QWidget):
         super().__init__(parent)
         self._attr = attr
         self._currentTime = currentTime
-        widgetClass = _type2widget.get(attr.GetTypeName(), UnsupportedAttributeWidget)
+        widgetClass = _type2widget.get(
+            attr.GetTypeName(), UnsupportedAttributeWidget)
         self._widget = widgetClass(attr, currentTime, self)
         self._optionButton = QToolButton(self)
         self._optionButton.setText("...")
 
         self._menu = QMenu(self._optionButton)
-        self._clearAction1 = QAction("Clear Default Value and All TimeSamples.")
+        self._clearAction1 = QAction(
+            "Clear Default Value and All TimeSamples.")
         self._clearAction1.triggered.connect(self._clearAll)
         self._clearAction2 = QAction("Clear Current TimeSampled Value.")
         self._clearAction2.triggered.connect(self._clear)

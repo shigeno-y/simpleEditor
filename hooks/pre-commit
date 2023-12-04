@@ -64,21 +64,20 @@ fi
 PATH="${OLD_PATH}"
 
 for f in $(git diff --cached --name-only --diff-filter=AMR $against); do
+	this_file_has_some_problem=0
 	if [[ $f =~ [ch]pp$ || $f =~ proto$ ]]
 	then
-		$clang_format_exec -i $f
-		git add $f
-		echo $f
+		$clang_format_exec -i $f || this_file_has_some_problem=1
 	elif [[ $f =~ CMakeLists.txt$ || $f =~ cmake$ ]]
 	then
-		$cmake_format_exec -i $f
-		git add $f
-		echo $f
+		$cmake_format_exec -i $f || this_file_has_some_problem=1
 	elif [[ $f =~ py$ ]]
 	then
-		python -m flake8 --extend-ignore E501 $f
-		python -m black $f
+		python -m ruff --fix $f || this_file_has_some_problem=1
+	fi
+
+	if [[ ! $this_file_has_some_problem ]]
+	then
 		git add $f
-		echo $f
 	fi
 done

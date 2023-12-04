@@ -1,0 +1,4 @@
+[tool.ruff]
+select = ["E", "F", "I"]
+unfixable = ["F401", "F841"]
+ignore = ["E501"]

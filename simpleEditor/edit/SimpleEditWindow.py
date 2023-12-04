@@ -42,6 +42,15 @@ class SimpleEditWindow(QMainWindow):
         self.__api = usdviewApi
         self.__title = "Simple Editor"
 
+        self.__api.dataModel.selection.signalPrimSelectionChanged.connect(
+            self.slotPrimSelectionChanged
+        )
+
+    def slotPrimSelectionChanged(self, newPrimPath, oldPrimPath):
+        prim = self.__api.stage.GetPrimAtPath(list(newPrimPath)[0])
+        time = self.__api.frame.GetValue()
+        self.update(prim, time)
+
     def eventFilter(self, watched, event: QEvent) -> bool:
         if event.type() == QEvent.WindowActivate:
             self.update(self.__api.prim, self.__api.frame.GetValue())

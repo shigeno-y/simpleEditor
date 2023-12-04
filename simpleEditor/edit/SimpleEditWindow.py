@@ -40,27 +40,28 @@ class SimpleEditWindow(QMainWindow):
         self.installEventFilter(self)
 
         self.__api = usdviewApi
-        self.__title = "Simple Editor"
+        self.__title = "/"
 
         self.__api.dataModel.selection.signalPrimSelectionChanged.connect(
             self.slotPrimSelectionChanged
         )
 
     def slotPrimSelectionChanged(self, newPrimPath, oldPrimPath):
-        prim = self.__api.stage.GetPrimAtPath(list(newPrimPath)[0])
-        time = self.__api.frame.GetValue()
-        self.update(prim, time)
+        self.update(list(newPrimPath)[0])
 
     def eventFilter(self, watched, event: QEvent) -> bool:
         if event.type() == QEvent.WindowActivate:
-            self.update(self.__api.prim, self.__api.frame.GetValue())
+            self.update(self.__api.prim.GetPath(), self.__api.frame.GetValue())
         return super().eventFilter(watched, event)
 
-    def update(self, prim, time):
-        newPrimPath = str(prim.GetPath())
+    def update(self, newPrimPath, time=None):
+        if time is None:
+            time = self.__api.frame.GetValue()
         if self.__title != newPrimPath:
             self.__title = newPrimPath
-            self.setWindowTitle(self.__title)
+            self.setWindowTitle(str(self.__title))
+
+        prim = self.__api.stage.GetPrimAtPath(newPrimPath)
         self.__widget.update(prim, time)
 
     def handler_SaveAs(self):

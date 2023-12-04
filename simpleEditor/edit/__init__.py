@@ -8,4 +8,4 @@ def edit(usdviewApi):
     if __window is None:
         __window = SimpleEditWindow.SimpleEditWindow(usdviewApi=usdviewApi)
     __window.show()
-    __window.update(usdviewApi.prim, usdviewApi.frame.GetValue())
+    __window.update(usdviewApi.prim.GetPath())

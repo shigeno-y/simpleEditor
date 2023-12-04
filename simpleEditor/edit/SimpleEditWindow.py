@@ -37,8 +37,6 @@ class SimpleEditWindow(QMainWindow):
         self.__widget = KeyValueWidget.KeyValueWidget(self.__scroll)
         self.__scroll.setWidget(self.__widget)
 
-        self.installEventFilter(self)
-
         self.__api = usdviewApi
         self.__title = "/"
 
@@ -48,11 +46,6 @@ class SimpleEditWindow(QMainWindow):
 
     def slotPrimSelectionChanged(self, newPrimPath, oldPrimPath):
         self.update(list(newPrimPath)[0])
-
-    def eventFilter(self, watched, event: QEvent) -> bool:
-        if event.type() == QEvent.WindowActivate:
-            self.update(self.__api.prim.GetPath(), self.__api.frame.GetValue())
-        return super().eventFilter(watched, event)
 
     def update(self, newPrimPath, time=None):
         if time is None:

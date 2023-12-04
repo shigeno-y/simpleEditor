@@ -28,6 +28,7 @@ _type2widget = {
     Sdf.ValueTypeNames.String: StringWidget,
     Sdf.ValueTypeNames.Token: TokenWidget,
     Sdf.ValueTypeNames.Bool: BoolWidget,
+    Sdf.ValueTypeNames.Color3f: Float3Widget,
 }
 
 

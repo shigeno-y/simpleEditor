@@ -45,7 +45,8 @@ class SimpleEditWindow(QMainWindow):
         )
 
     def slotPrimSelectionChanged(self, newPrimPath, oldPrimPath):
-        self.update(list(newPrimPath)[0])
+        if len(newPrimPath) > 0:
+            self.update(list(newPrimPath)[0])
 
     def update(self, newPrimPath, time=None):
         if time is None:

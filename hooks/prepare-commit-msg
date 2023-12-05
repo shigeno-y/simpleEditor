@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # An example hook script to prepare the commit log message.
 # Called by "git commit" with the name of the file that has the
@@ -23,6 +23,14 @@
 COMMIT_MSG_FILE=$1
 COMMIT_SOURCE=$2
 SHA1=$3
+
+tmpfile=$(mktemp)
+tmpfile2=$(mktemp)
+function rm_tmpfile {
+  rm -f "$tmpfile" "$tmpfile2"
+}
+trap rm_tmpfile EXIT
+trap 'trap - EXIT; rm_tmpfile; exit -1' INT PIPE TERM
 
 OLD_PATH="${PATH}"
 PATH="$(dirname $(realpath $0)):$PATH"
@@ -49,24 +57,27 @@ then
 fi
 PATH="${OLD_PATH}"
 
-case "${COMMIT_SOURCE}" in
-  commit)
-  COMMIT_MSG_FILE=/dev/null
-  ;;
-esac
-
 for f in $(git diff --cached --name-only --diff-filter=AMR $against); do
-	this_file_has_some_problem=0
 	if [[ $f =~ [ch]pp$ || $f =~ proto$ ]]
 	then
-		$clang_format_exec -i $f 2>&1 >> $COMMIT_MSG_FILE
+		$clang_format_exec -i $f 2>&1 >> $tmpfile
 	elif [[ $f =~ CMakeLists.txt$ || $f =~ cmake$ ]]
 	then
-		$cmake_format_exec -i $f 2>&1 >> $COMMIT_MSG_FILE
+		$cmake_format_exec -i $f 2>&1 >> $tmpfile
 	elif [[ $f =~ py$ ]]
 	then
-		python -m ruff -q $f 2>&1 >> $COMMIT_MSG_FILE
+		python -m ruff -q $f 2>&1 >> $tmpfile
 	fi
 done
+
+sed -i'' -e 's/^/# /' $tmpfile
+
+cat <<MESSAGE > $tmpfile2
+$(cat $tmpfile)
+
+$(cat $COMMIT_MSG_FILE)
+MESSAGE
+
+cat $tmpfile2 > $COMMIT_MSG_FILE
 
 exit 0

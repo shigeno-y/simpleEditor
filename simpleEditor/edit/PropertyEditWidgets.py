@@ -1,6 +1,9 @@
+from pxr import (
+    Gf,
+)
 from PySide2.QtCore import (
-    Qt,
     QSignalBlocker,
+    Qt,
     Signal,
 )
 from PySide2.QtGui import (
@@ -9,15 +12,12 @@ from PySide2.QtGui import (
     QIntValidator,  # TEMP: Expression を実装したら使用しなくなる.
 )
 from PySide2.QtWidgets import (
-    QLabel,
-    QLineEdit,
     QCheckBox,
     QComboBox,
     QHBoxLayout,
+    QLabel,
+    QLineEdit,
     QWidget,
-)
-from pxr import (
-    Gf,
 )
 
 

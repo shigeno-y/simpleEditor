@@ -1,3 +1,4 @@
+black==23.11.0
 clang-format==17.0.4
 cmake-format==0.6.13
 conan==1.61.0
@@ -7,23 +8,31 @@ pyopengl==3.1.7
 pyside2==5.15.2.1
 ruff==0.1.6
 # bottle==0.12.25 # Installed as dependency for conan
-# certifi==2023.7.22 # Installed as dependency for requests
+# certifi==2023.11.17 # Installed as dependency for requests
 # charset-normalizer==3.3.2 # Installed as dependency for requests
+# click==8.1.7 # Installed as dependency for black
 # cmakelang==0.6.13 # Installed as dependency for cmake-format
 # colorama==0.4.6 # Installed as dependency for conan
+# distro==1.8.0 # Installed as dependency for conan
 # fasteners==0.19 # Installed as dependency for conan
-# idna==3.4 # Installed as dependency for requests
+# idna==3.6 # Installed as dependency for requests
 # jinja2==3.1.2 # Installed as dependency for conan
 # markupsafe==2.1.3 # Installed as dependency for jinja2
+# mypy-extensions==1.0.0 # Installed as dependency for black
 # node-semver==0.6.1 # Installed as dependency for conan
+# packaging==23.2 # Installed as dependency for black
 # patch-ng==1.17.4 # Installed as dependency for conan
+# pathspec==0.11.2 # Installed as dependency for black
+# platformdirs==4.1.0 # Installed as dependency for black
 # pluginbase==1.0.1 # Installed as dependency for conan
-# pygments==2.16.1 # Installed as dependency for conan
+# pygments==2.17.2 # Installed as dependency for conan
 # pyjwt==2.8.0 # Installed as dependency for conan
 # python-dateutil==2.8.2 # Installed as dependency for conan
 # pyyaml==6.0.1 # Installed as dependency for conan
 # requests==2.31.0 # Installed as dependency for conan
 # shiboken2==5.15.2.1 # Installed as dependency for pyside2
 # six==1.16.0 # Installed as dependency for cmakelang, conan, python-dateutil
+# tomli==2.0.1 # Installed as dependency for black
 # tqdm==4.66.1 # Installed as dependency for conan
+# typing-extensions==4.8.0 # Installed as dependency for black
 # urllib3==1.26.18 # Installed as dependency for conan, requests

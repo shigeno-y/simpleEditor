@@ -64,19 +64,19 @@ fi
 PATH="${OLD_PATH}"
 
 for f in $(git diff --cached --name-only --diff-filter=AMR $against); do
-	this_file_has_some_problem=0
+	resolved=0
 	if [[ $f =~ [ch]pp$ || $f =~ proto$ ]]
 	then
-		$clang_format_exec -i $f || this_file_has_some_problem=1
+		$clang_format_exec -i $f && resolved=1
 	elif [[ $f =~ CMakeLists.txt$ || $f =~ cmake$ ]]
 	then
-		$cmake_format_exec -i $f || this_file_has_some_problem=1
+		$cmake_format_exec -i $f && resolved=1
 	elif [[ $f =~ py$ ]]
 	then
-		python -m ruff --fix $f || this_file_has_some_problem=1
+		python -m black --line-length=119 $f && python -m ruff --fix $f && resolved=1
 	fi
 
-	if [[ ! $this_file_has_some_problem ]]
+	if [[ $resolved ]]
 	then
 		git add $f
 	fi

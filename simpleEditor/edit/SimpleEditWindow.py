@@ -1,7 +1,6 @@
 from pathlib import Path
 
 from pxr import Sdf, UsdUtils
-from PySide2.QtCore import QEvent
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import (
     QFileDialog,
@@ -38,22 +37,32 @@ class SimpleEditWindow(QMainWindow):
         self.__scroll.setWidget(self.__widget)
 
         self.__api = usdviewApi
-        self.__title = "/"
+        self.__currentTarget = "/"
 
         self.__api.dataModel.selection.signalPrimSelectionChanged.connect(
             self.slotPrimSelectionChanged
         )
+        self.__api._UsdviewApi__appController._ui.frameSlider.valueChanged.connect(
+            self.slotTimecodeChanged
+        )
 
-    def slotPrimSelectionChanged(self, newPrimPath, oldPrimPath):
-        if len(newPrimPath) > 0:
+    def slotPrimSelectionChanged(self, newPrimPath=None, oldPrimPath=None):
+        if newPrimPath is None or len(newPrimPath) < 1:
+            self.update()
+        else:
             self.update(list(newPrimPath)[0])
 
-    def update(self, newPrimPath, time=None):
+    def slotTimecodeChanged(self, newTimecode):
+        self.update(self.__currentTarget, newTimecode)
+
+    def update(self, newPrimPath=None, time=None):
+        if newPrimPath is None:
+            newPrimPath = self.__currentTarget
         if time is None:
             time = self.__api.frame.GetValue()
-        if self.__title != newPrimPath:
-            self.__title = newPrimPath
-            self.setWindowTitle(str(self.__title))
+        if self.__currentTarget != newPrimPath:
+            self.__currentTarget = newPrimPath
+            self.setWindowTitle(str(self.__currentTarget))
 
         prim = self.__api.stage.GetPrimAtPath(newPrimPath)
         self.__widget.update(prim, time)

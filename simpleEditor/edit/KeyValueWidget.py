@@ -23,7 +23,8 @@ class KeyValueWidget(QWidget):
         if self._currentPrim is None or self._currentPrim != prim.GetPath():
             self._currentPrim = prim.GetPath()
             if self._widget is not None:
-                self.layout().takeAt(0)
+                for _ in range(self.layout().count()):
+                    self.layout().takeAt(0)
                 self._widget.deleteLater()
             self._widget = QWidget(self)
             self._layout = QFormLayout(self._widget)
@@ -60,6 +61,7 @@ class KeyValueWidget(QWidget):
                 self._uiWidgets.append(attrWidget)
 
             self.layout().addWidget(self._widget)
+            self.layout().addStretch(1)
 
         else:
             for w in self._uiWidgets:

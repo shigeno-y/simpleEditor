@@ -10,6 +10,7 @@ from PySide2.QtWidgets import (
     QStyle,
     QVBoxLayout,
     QWidget,
+    QLineEdit,
 )
 
 from . import KeyValueWidget
@@ -28,6 +29,14 @@ class SimpleEditWindow(QMainWindow):
         )
         self.__save_as_button.clicked.connect(self.handler_SaveAs)
         self.__layout.addWidget(self.__save_as_button)
+
+        self.__remove_this_prim_button = QPushButton("Remove PrimSpec", self.__rootWidget)
+        self.__remove_this_prim_button.setIcon(
+            QIcon(self.style().standardIcon(QStyle.SP_DialogCloseButton))
+        )
+        self.__remove_this_prim_button.clicked.connect(self.handler_RemoveThisPrim)
+        self.__layout.addWidget(self.__remove_this_prim_button)
+
 
         self.__scroll = QScrollArea(self)
         self.__scroll.setWidgetResizable(True)
@@ -90,3 +99,6 @@ class SimpleEditWindow(QMainWindow):
             flatten_layer.subLayerPaths.append(p)
 
         flatten_layer.Export(filename)
+
+    def handler_RemoveThisPrim(self):
+        self.__api.stage.RemovePrim(self.__currentTarget)

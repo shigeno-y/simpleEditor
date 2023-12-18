@@ -2,6 +2,7 @@ from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QFormLayout,
     QLabel,
+    QLineEdit,
     QVBoxLayout,
     QWidget,
 )
@@ -15,13 +16,16 @@ class KeyValueWidget(QWidget):
         layout = QVBoxLayout(self)
         self.setLayout(layout)
         self._widget = None
+        self._primTypeWidget = None
         self._uiWidgets = None
         self._layout = None
         self._currentPrim = None
+        self._currentTime = None
 
-    def update(self, prim, currentTime):
-        if self._currentPrim is None or self._currentPrim != prim.GetPath():
-            self._currentPrim = prim.GetPath()
+    def update(self, prim, currentTime, *, force=False):
+        self._currentTime = currentTime
+        if force or self._currentPrim is None or self._currentPrim != prim:
+            self._currentPrim = prim
             if self._widget is not None:
                 self.layout().takeAt(0)
                 self._widget.deleteLater()
@@ -29,6 +33,11 @@ class KeyValueWidget(QWidget):
             self._layout = QFormLayout(self._widget)
             self._layout.setLabelAlignment(Qt.AlignRight)
             self._uiWidgets = list()
+
+            self._primTypeWidget = QLineEdit(self)
+            self._primTypeWidget.editingFinished.connect(self._setPrimType)
+            self._primTypeWidget.setText(prim.GetTypeName())
+            self._layout.addRow("Type", self._primTypeWidget)
 
             bold_font = self.font()
             bold_font.setBold(True)
@@ -64,3 +73,8 @@ class KeyValueWidget(QWidget):
         else:
             for w in self._uiWidgets:
                 w.setCurrentTime(currentTime)
+
+    def _setPrimType(self):
+        primTypeStr = self._primTypeWidget.text()
+        self._currentPrim.SetTypeName(primTypeStr)
+        self.update(self._currentPrim, self._currentTime, force=True)

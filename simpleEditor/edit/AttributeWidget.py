@@ -60,9 +60,10 @@ class AttributeWidget(QWidget):
         # Unauthored Widget
         self._unauthoredWidget = QPushButton(self._stackedWidget)
         self._unauthoredWidget.setText("None")
-        self._unauthoredWidget.setEnabled(
-            self._attr.GetTypeName() in _type2defaultValue
-        )
+        self._unauthoredWidget.setStyleSheet("text-align: left;")
+        if self._attr.GetTypeName() not in _type2defaultValue:
+            self._unauthoredWidget.setEnabled(False)
+            self._unauthoredWidget.setText("None (Unsupported Type.)")
         self._unauthoredWidget.clicked.connect(self._authorDefaultValue)
         self._stackedWidget.addWidget(self._unauthoredWidget)
 

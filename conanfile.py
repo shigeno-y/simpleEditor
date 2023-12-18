@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: usdMMDPlugins-LICENSE-1
 
-from conans import ConanFile
 from conan.tools.env import VirtualRunEnv
+from conans import ConanFile
 
 
 class SimpleEditorDevConan(ConanFile):

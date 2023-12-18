@@ -1,0 +1,83 @@
+#!/bin/bash
+#
+# An example hook script to prepare the commit log message.
+# Called by "git commit" with the name of the file that has the
+# commit message, followed by the description of the commit
+# message's source.  The hook's purpose is to edit the commit
+# message file.  If the hook fails with a non-zero status,
+# the commit is aborted.
+#
+# To enable this hook, rename this file to "prepare-commit-msg".
+
+# This hook includes three examples. The first one removes the
+# "# Please enter the commit message..." help message.
+#
+# The second includes the output of "git diff --name-status -r"
+# into the message, just before the "git status" output.  It is
+# commented because it doesn't cope with --amend or with squashed
+# commits.
+#
+# The third example adds a Signed-off-by line to the message, that can
+# still be edited.  This is rarely a good idea.
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+SHA1=$3
+
+tmpfile=$(mktemp)
+tmpfile2=$(mktemp)
+function rm_tmpfile {
+  rm -f "$tmpfile" "$tmpfile2"
+}
+trap rm_tmpfile EXIT
+trap 'trap - EXIT; rm_tmpfile; exit -1' INT PIPE TERM
+
+OLD_PATH="${PATH}"
+PATH="$(dirname $(realpath $0)):$PATH"
+clang_format_exec=$(which clang-format)
+if [[ -z ${clang_format_exec} ]]
+then
+	if [[ $(uname) = "Linux" ]]
+	then
+		clang_format_exec=$(which clang-format)
+	else
+		clang_format_exec=$(realpath "$(dirname $(realpath $0))/clang-format.exe")
+	fi
+fi
+
+cmake_format_exec=$(which cmake-format)
+if [[ -z ${cmake_format_exec} ]]
+then
+	if [[ $(uname) = "Linux" ]]
+	then
+		cmake_format_exec=$(which cmake-format)
+	else
+		cmake_format_exec=$(realpath "$(dirname $(realpath $0))/cmake-format.exe")
+	fi
+fi
+PATH="${OLD_PATH}"
+
+for f in $(git diff --cached --name-only --diff-filter=AMR $against); do
+	if [[ $f =~ [ch]pp$ || $f =~ proto$ ]]
+	then
+		$clang_format_exec -i $f 2>&1 >> $tmpfile
+	elif [[ $f =~ CMakeLists.txt$ || $f =~ cmake$ ]]
+	then
+		$cmake_format_exec -i $f 2>&1 >> $tmpfile
+	elif [[ $f =~ py$ ]]
+	then
+		python -m ruff -q $f 2>&1 >> $tmpfile
+	fi
+done
+
+sed -i'' -e 's/^/# /' $tmpfile
+
+cat <<MESSAGE > $tmpfile2
+$(cat $tmpfile)
+
+$(cat $COMMIT_MSG_FILE)
+MESSAGE
+
+cat $tmpfile2 > $COMMIT_MSG_FILE
+
+exit 0

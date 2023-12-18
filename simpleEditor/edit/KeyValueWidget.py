@@ -1,9 +1,9 @@
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QFormLayout,
-    QWidget,
     QLabel,
     QVBoxLayout,
+    QWidget,
 )
 
 from . import AttributeWidget

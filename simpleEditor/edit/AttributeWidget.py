@@ -1,25 +1,27 @@
 from pxr import Sdf
 from PySide2.QtWidgets import (
-    QWidget,
-    QHBoxLayout,
-    QToolButton,
-    QMenu,
     QAction,
+    QHBoxLayout,
+    QMenu,
+    QToolButton,
+    QWidget,
 )
 
+from .PropertyEdit import AssetWidget, ColorPickerWidget
 from .PropertyEditWidgets import (
-    StringWidget,
-    TokenWidget,
     BoolWidget,
-    FloatWidget,
     Float2Widget,
     Float3Widget,
     Float4Widget,
+    FloatWidget,
     IntWidget,
+    StringWidget,
+    TokenWidget,
     UnsupportedAttributeWidget,
 )
 
 _type2widget = {
+    Sdf.ValueTypeNames.Asset: AssetWidget,
     Sdf.ValueTypeNames.Float: FloatWidget,
     Sdf.ValueTypeNames.Float2: Float2Widget,
     Sdf.ValueTypeNames.Float3: Float3Widget,
@@ -28,6 +30,7 @@ _type2widget = {
     Sdf.ValueTypeNames.String: StringWidget,
     Sdf.ValueTypeNames.Token: TokenWidget,
     Sdf.ValueTypeNames.Bool: BoolWidget,
+    Sdf.ValueTypeNames.Color3f: ColorPickerWidget,
 }
 
 

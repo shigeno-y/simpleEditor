@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pxr import Sdf, UsdUtils
+from pxr import Sdf, UsdUtils, Tf
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import (
     QFileDialog,
@@ -10,6 +10,8 @@ from PySide2.QtWidgets import (
     QStyle,
     QVBoxLayout,
     QWidget,
+    QInputDialog,
+    QLineEdit,
 )
 
 from . import KeyValueWidget
@@ -23,11 +25,19 @@ class SimpleEditWindow(QMainWindow):
         self.__layout = QVBoxLayout(self.__rootWidget)
 
         self.__save_as_button = QPushButton("Save as", self.__rootWidget)
-        self.__save_as_button.setIcon(
-            QIcon(self.style().standardIcon(QStyle.SP_DialogSaveButton))
-        )
+        self.__save_as_button.setIcon(QIcon(self.style().standardIcon(QStyle.SP_DialogSaveButton)))
         self.__save_as_button.clicked.connect(self.handler_SaveAs)
         self.__layout.addWidget(self.__save_as_button)
+
+        self.__remove_this_prim_button = QPushButton("Remove PrimSpec", self.__rootWidget)
+        self.__remove_this_prim_button.setIcon(QIcon(self.style().standardIcon(QStyle.SP_DialogCloseButton)))
+        self.__remove_this_prim_button.clicked.connect(self.handler_RemoveThisPrim)
+        self.__layout.addWidget(self.__remove_this_prim_button)
+
+        self.__add_child_prim_button = QPushButton("Add child PrimSpec", self.__rootWidget)
+        self.__add_child_prim_button.setIcon(QIcon(self.style().standardIcon(QStyle.SP_ArrowForward)))
+        self.__add_child_prim_button.clicked.connect(self.handler_AddChildPrim)
+        self.__layout.addWidget(self.__add_child_prim_button)
 
         self.__scroll = QScrollArea(self)
         self.__scroll.setWidgetResizable(True)
@@ -39,12 +49,8 @@ class SimpleEditWindow(QMainWindow):
         self.__api = usdviewApi
         self.__currentTarget = "/"
 
-        self.__api.dataModel.selection.signalPrimSelectionChanged.connect(
-            self.slotPrimSelectionChanged
-        )
-        self.__api._UsdviewApi__appController._ui.frameSlider.valueChanged.connect(
-            self.slotTimecodeChanged
-        )
+        self.__api.dataModel.selection.signalPrimSelectionChanged.connect(self.slotPrimSelectionChanged)
+        self.__api._UsdviewApi__appController._ui.frameSlider.valueChanged.connect(self.slotTimecodeChanged)
 
     def slotPrimSelectionChanged(self, newPrimPath=None, oldPrimPath=None):
         if newPrimPath is None or len(newPrimPath) < 1:
@@ -90,3 +96,17 @@ class SimpleEditWindow(QMainWindow):
             flatten_layer.subLayerPaths.append(p)
 
         flatten_layer.Export(filename)
+
+    def handler_RemoveThisPrim(self):
+        self.__api.stage.RemovePrim(self.__currentTarget)
+
+    def handler_AddChildPrim(self):
+        text, ok = QInputDialog().getText(self, "New PrimSpec Name", "", QLineEdit.Normal)
+        if ok and Tf.IsValidIdentifier(text):
+            prim = self.__api.stage.DefinePrim(self.__api.prim.GetPath().AppendChild(text))
+            self.__api._UsdviewApi__appController._resetPrimView()
+            self.__api.ClearPrimSelection()
+            self.__api._UsdviewApi__appController._updatePrimViewSelection([prim.GetPath()], ["/"])
+            self.__api._UsdviewApi__appController._ui.primView.ExpandItemRecursively(
+                self.__api._UsdviewApi__appController._getItemAtPath(prim.GetPath())
+            )

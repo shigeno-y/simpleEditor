@@ -33,7 +33,8 @@ class FloatWidget(ExpressionFloatLineEdit):
     def sync(self, currentTime):
         with SignalBlocker(self):
             value = self._attr.Get(currentTime)
-            self.setValue(value if value is not None else 0.0)
+            if value is not None:
+                self.setValue(value)
 
 
 class Float2Widget(QWidget):

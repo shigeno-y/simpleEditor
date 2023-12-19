@@ -32,7 +32,8 @@ class FloatWidget(ExpressionFloatLineEdit):
 
     def sync(self, currentTime):
         with SignalBlocker(self):
-            self.setValue(self._attr.Get(currentTime))
+            value = self._attr.Get(currentTime)
+            self.setValue(value if value is not None else 0.0)
 
 
 class Float2Widget(QWidget):
@@ -57,10 +58,11 @@ class Float2Widget(QWidget):
         return _type2ReturnCls[self._attr.GetTypeName()](self._widgetX.value(), self._widgetY.value())
 
     def setValue(self, value):
-        with SignalBlocker(self._widgetX):
-            self._widgetX.setValue(value[0])
-        with SignalBlocker(self._widgetY):
-            self._widgetY.setValue(value[1])
+        if value is not None:
+            with SignalBlocker(self._widgetX):
+                self._widgetX.setValue(value[0])
+            with SignalBlocker(self._widgetY):
+                self._widgetY.setValue(value[1])
 
     def sync(self, currentTime):
         with SignalBlocker(self):
@@ -94,12 +96,13 @@ class Float3Widget(QWidget):
         )
 
     def setValue(self, value):
-        with SignalBlocker(self._widgetX):
-            self._widgetX.setValue(value[0])
-        with SignalBlocker(self._widgetY):
-            self._widgetY.setValue(value[1])
-        with SignalBlocker(self._widgetZ):
-            self._widgetZ.setValue(value[2])
+        if value is not None:
+            with SignalBlocker(self._widgetX):
+                self._widgetX.setValue(value[0])
+            with SignalBlocker(self._widgetY):
+                self._widgetY.setValue(value[1])
+            with SignalBlocker(self._widgetZ):
+                self._widgetZ.setValue(value[2])
 
     def sync(self, currentTime):
         with SignalBlocker(self):
@@ -139,14 +142,15 @@ class Float4Widget(QWidget):
         )
 
     def setValue(self, value):
-        with SignalBlocker(self._widgetX):
-            self._widgetX.setValue(value[0])
-        with SignalBlocker(self._widgetY):
-            self._widgetY.setValue(value[1])
-        with SignalBlocker(self._widgetZ):
-            self._widgetZ.setValue(value[2])
-        with SignalBlocker(self._widgetW):
-            self._widgetW.setValue(value[3])
+        if value is not None:
+            with SignalBlocker(self._widgetX):
+                self._widgetX.setValue(value[0])
+            with SignalBlocker(self._widgetY):
+                self._widgetY.setValue(value[1])
+            with SignalBlocker(self._widgetZ):
+                self._widgetZ.setValue(value[2])
+            with SignalBlocker(self._widgetW):
+                self._widgetW.setValue(value[3])
 
     def sync(self, currentTime):
         with SignalBlocker(self):

@@ -54,9 +54,7 @@ class Float2Widget(QWidget):
         self._attr.Set(self.value())
 
     def value(self):
-        return _type2ReturnCls[self._attr.GetTypeName()](
-            self._widgetX.value(), self._widgetY.value()
-        )
+        return _type2ReturnCls[self._attr.GetTypeName()](self._widgetX.value(), self._widgetY.value())
 
     def setValue(self, value):
         with SignalBlocker(self._widgetX):

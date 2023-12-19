@@ -1,4 +1,4 @@
-from pxr import Gf, Sdf
+from pxr import Gf, Sdf, UsdGeom
 from PySide2.QtWidgets import (
     QAction,
     QHBoxLayout,
@@ -21,6 +21,7 @@ from .PropertyEdit import (
     StringWidget,
     TokenWidget,
     UnsupportedAttributeWidget,
+    XformOpWidget,
 )
 
 _type2widget = {
@@ -55,6 +56,7 @@ _type2defaultValue = {
     Sdf.ValueTypeNames.Token: "",
     Sdf.ValueTypeNames.Bool: False,
     Sdf.ValueTypeNames.Color3f: Gf.Vec3f(),
+    Sdf.ValueTypeNames.TokenArray: list(),
 }
 
 
@@ -77,7 +79,12 @@ class AttributeWidget(QWidget):
         self._stackedWidget.addWidget(self._unauthoredWidget)
 
         # Editor Widget
-        widgetClass = _type2widget.get(attr.GetTypeName(), UnsupportedAttributeWidget)
+        widgetClass = None
+        if attr.GetPrim().IsA(UsdGeom.Xformable) and UsdGeom.Xformable(attr.GetPrim()).GetXformOpOrderAttr() == attr:
+            # xformOpOrder の特殊対応
+            widgetClass = XformOpWidget
+        else:
+            widgetClass = _type2widget.get(attr.GetTypeName(), UnsupportedAttributeWidget)
         self._widget = widgetClass(attr, currentTime, self._stackedWidget)
         self._stackedWidget.addWidget(self._widget)
         self._optionButton = QToolButton(self)
@@ -134,8 +141,4 @@ class AttributeWidget(QWidget):
         self._sync()
 
     def labelText(self, defaultValue):
-        return (
-            self._widget.labelText()
-            if hasattr(self._widget, "labelText")
-            else defaultValue
-        )
+        return self._widget.labelText() if hasattr(self._widget, "labelText") else defaultValue

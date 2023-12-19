@@ -43,28 +43,31 @@ class KeyValueWidget(QWidget):
             bold_font = self.font()
             bold_font.setBold(True)
 
+            def sortKey(attr):
+                if attr.GetName() == "xformOpOrder":
+                    return "2xformOp:_front_"
+                else:
+                    return f"{len(attr.GetName().split(':'))}{attr.GetName()}"
+
             attrs = prim.GetAttributes()
-            attrs.sort(
-                key=lambda attr: f"{len(attr.GetName().split(':'))}{attr.GetName()}"
-            )
+            attrs.sort(key=sortKey)
             currentNamespace = ""
             for attr in attrs:
-                namespace = attr.GetNamespace()
                 baseName = attr.GetBaseName()
+                if attr.GetName() == "xformOpOrder":
+                    namespace = "xformOp"
+                else:
+                    namespace = attr.GetNamespace()
                 if namespace != currentNamespace:
                     label = QLabel(namespace, self._widget)
                     label.setMinimumHeight(38)
                     label.setAlignment(Qt.AlignLeft | Qt.AlignBottom)
-                    label.setStyleSheet(
-                        "border: none; border-bottom: 1px solid #666666;"
-                    )
+                    label.setStyleSheet("border: none; border-bottom: 1px solid #666666;")
                     label.setFont(bold_font)
                     self._layout.addRow(label)
                     currentNamespace = namespace
 
-                attrWidget = AttributeWidget.AttributeWidget(
-                    attr, currentTime, self._widget
-                )
+                attrWidget = AttributeWidget.AttributeWidget(attr, currentTime, self._widget)
                 baseName = attrWidget.labelText(baseName)
                 self._layout.addRow(baseName, attrWidget)
                 self._uiWidgets.append(attrWidget)

@@ -32,7 +32,9 @@ class FloatWidget(ExpressionFloatLineEdit):
 
     def sync(self, currentTime):
         with SignalBlocker(self):
-            self.setValue(self._attr.Get(currentTime))
+            value = self._attr.Get(currentTime)
+            if value is not None:
+                self.setValue(value)
 
 
 class Float2Widget(QWidget):
@@ -64,7 +66,9 @@ class Float2Widget(QWidget):
 
     def sync(self, currentTime):
         with SignalBlocker(self):
-            self.setValue(self._attr.Get(currentTime))
+            value = self._attr.Get(currentTime)
+            if value is not None:
+                self.setValue(value)
 
 
 class Float3Widget(QWidget):
@@ -103,7 +107,9 @@ class Float3Widget(QWidget):
 
     def sync(self, currentTime):
         with SignalBlocker(self):
-            self.setValue(self._attr.Get(currentTime))
+            value = self._attr.Get(currentTime)
+            if value is not None:
+                self.setValue(value)
 
 
 class Float4Widget(QWidget):
@@ -150,4 +156,6 @@ class Float4Widget(QWidget):
 
     def sync(self, currentTime):
         with SignalBlocker(self):
-            self.setValue(self._attr.Get(currentTime))
+            value = self._attr.Get(currentTime)
+            if value is not None:
+                self.setValue(value)

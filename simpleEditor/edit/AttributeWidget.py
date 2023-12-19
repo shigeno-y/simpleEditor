@@ -9,13 +9,14 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 
-from .PropertyEdit import AssetWidget, ColorPickerWidget
-from .PropertyEditWidgets import (
+from .PropertyEdit import (
+    AssetWidget,
     BoolWidget,
+    ColorPickerWidget,
+    FloatWidget,
     Float2Widget,
     Float3Widget,
     Float4Widget,
-    FloatWidget,
     IntWidget,
     StringWidget,
     TokenWidget,
@@ -28,6 +29,10 @@ _type2widget = {
     Sdf.ValueTypeNames.Float2: Float2Widget,
     Sdf.ValueTypeNames.Float3: Float3Widget,
     Sdf.ValueTypeNames.Float4: Float4Widget,
+    Sdf.ValueTypeNames.Double: FloatWidget,
+    Sdf.ValueTypeNames.Double2: Float2Widget,
+    Sdf.ValueTypeNames.Double3: Float3Widget,
+    Sdf.ValueTypeNames.Double4: Float4Widget,
     Sdf.ValueTypeNames.Int: IntWidget,
     Sdf.ValueTypeNames.String: StringWidget,
     Sdf.ValueTypeNames.Token: TokenWidget,
@@ -41,6 +46,10 @@ _type2defaultValue = {
     Sdf.ValueTypeNames.Float2: Gf.Vec2f(),
     Sdf.ValueTypeNames.Float3: Gf.Vec3f(),
     Sdf.ValueTypeNames.Float4: Gf.Vec4f(),
+    Sdf.ValueTypeNames.Double: 0.0,
+    Sdf.ValueTypeNames.Double2: Gf.Vec2d(),
+    Sdf.ValueTypeNames.Double3: Gf.Vec3d(),
+    Sdf.ValueTypeNames.Double4: Gf.Vec4d(),
     Sdf.ValueTypeNames.Int: 0,
     Sdf.ValueTypeNames.String: "",
     Sdf.ValueTypeNames.Token: "",

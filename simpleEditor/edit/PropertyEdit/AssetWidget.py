@@ -30,7 +30,7 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 
-from simpleEditor.edit.PropertyEditWidgets import SignalBlocker
+from .SignalBlocker import SignalBlocker
 
 
 class AssetWidget(QWidget):
@@ -38,7 +38,9 @@ class AssetWidget(QWidget):
         super().__init__(parent)
         self._layout = QHBoxLayout(self)
         self._openAsset = QPushButton("", self)
-        self._openAsset.setIcon(QIcon(self.style().standardIcon(QStyle.SP_ArrowForward)))
+        self._openAsset.setIcon(
+            QIcon(self.style().standardIcon(QStyle.SP_ArrowForward))
+        )
         self._openAsset.clicked.connect(self.handlerAssetPicker)
         self._assetPath = QLineEdit(self)
         self._layout.addWidget(self._openAsset)

@@ -24,24 +24,26 @@ class SimpleEditWindow(QMainWindow):
         self.__rootWidget = QWidget(self)
         self.setCentralWidget(self.__rootWidget)
         self.__layout = QVBoxLayout(self.__rootWidget)
-        self.__menu = QHBoxLayout(self)
 
-        self.__save_as_button = QPushButton("Save as", self.__rootWidget)
+        self.__menu_widget = QWidget(self)
+        self.__menu = QHBoxLayout()
+        self.__menu_widget.setLayout(self.__menu)
+        self.__layout.addWidget(self.__menu_widget)
+
+        self.__save_as_button = QPushButton("Save as", self)
         self.__save_as_button.setIcon(QIcon(self.style().standardIcon(QStyle.SP_DialogSaveButton)))
         self.__save_as_button.clicked.connect(self.handler_SaveAs)
         self.__menu.addWidget(self.__save_as_button)
 
-        self.__add_child_prim_button = QPushButton("Add child PrimSpec", self.__rootWidget)
+        self.__add_child_prim_button = QPushButton("Add child PrimSpec", self)
         self.__add_child_prim_button.setIcon(QIcon(self.style().standardIcon(QStyle.SP_ArrowForward)))
         self.__add_child_prim_button.clicked.connect(self.handler_AddChildPrim)
         self.__menu.addWidget(self.__add_child_prim_button)
 
-        self.__remove_this_prim_button = QPushButton("Remove PrimSpec", self.__rootWidget)
+        self.__remove_this_prim_button = QPushButton("Remove PrimSpec", self)
         self.__remove_this_prim_button.setIcon(QIcon(self.style().standardIcon(QStyle.SP_DialogCloseButton)))
         self.__remove_this_prim_button.clicked.connect(self.handler_RemoveThisPrim)
         self.__menu.addWidget(self.__remove_this_prim_button)
-
-        self.__layout.addLayout(self.__menu)
 
         self.__scroll = QScrollArea(self)
         self.__scroll.setWidgetResizable(True)

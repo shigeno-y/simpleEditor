@@ -1,10 +1,11 @@
 from pathlib import Path
 
 from pxr import Sdf, UsdUtils, Tf
+from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import (
+    QDockWidget,
     QFileDialog,
-    QMainWindow,
     QPushButton,
     QScrollArea,
     QStyle,
@@ -17,12 +18,19 @@ from PySide2.QtWidgets import (
 from . import KeyValueWidget
 
 
-class SimpleEditWindow(QMainWindow):
+class SimpleEditWindow(QDockWidget):
     def __init__(self, parent=None, *args, usdviewApi, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
         self.__rootWidget = QWidget(self)
-        self.setCentralWidget(self.__rootWidget)
         self.__layout = QVBoxLayout(self.__rootWidget)
+
+        self.setWindowTitle("/")
+        self.setFeatures(
+            QDockWidget.DockWidgetClosable | QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable
+        )
+        self.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        self.setFloating(True)
+        self.setWidget(self.__rootWidget)
 
         self.__save_as_button = QPushButton("Save as", self.__rootWidget)
         self.__save_as_button.setIcon(QIcon(self.style().standardIcon(QStyle.SP_DialogSaveButton)))

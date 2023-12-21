@@ -4,8 +4,8 @@ from pxr import Sdf, UsdUtils, Tf
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import (
-    QFileDialog,
     QDockWidget,
+    QFileDialog,
     QPushButton,
     QScrollArea,
     QStyle,

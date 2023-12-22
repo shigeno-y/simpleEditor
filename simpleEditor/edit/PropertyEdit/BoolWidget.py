@@ -7,7 +7,7 @@ class BoolWidget(QCheckBox):
         super().__init__(parent)
         self.toggled.connect(self._onToggled)
         self._attr = attr
-        self.setText(attr.GetBaseName())
+        self.setText(attr.GetName().split(":", 1)[-1])
         self.sync(currentTime)
 
     def _onToggled(self, flag):

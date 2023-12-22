@@ -3,6 +3,7 @@ from PySide2.QtWidgets import (
     QFormLayout,
     QLabel,
     QLineEdit,
+    QSizePolicy,
     QVBoxLayout,
     QWidget,
 )
@@ -32,7 +33,7 @@ class KeyValueWidget(QWidget):
                 self._widget.deleteLater()
             self._widget = QWidget(self)
             self._layout = QFormLayout(self._widget)
-            self._layout.setLabelAlignment(Qt.AlignRight)
+            self._layout.setLabelAlignment(Qt.AlignRight | Qt.AlignVCenter)
             self._uiWidgets = list()
 
             self._primTypeWidget = QLineEdit(self)
@@ -43,30 +44,32 @@ class KeyValueWidget(QWidget):
             bold_font = self.font()
             bold_font.setBold(True)
 
+            def sortKey(attr):
+                return f"{len(attr.GetName().split(':', 1))}{attr.GetName()}"
+
             attrs = prim.GetAttributes()
-            attrs.sort(
-                key=lambda attr: f"{len(attr.GetName().split(':'))}{attr.GetName()}"
-            )
+            attrs.sort(key=sortKey)
             currentNamespace = ""
             for attr in attrs:
-                namespace = attr.GetNamespace()
-                baseName = attr.GetBaseName()
+                words = attr.GetName().split(":", 1)
+                namespace = words[0] if len(words) == 2 else ""
+                baseName = words[-1]
+                if namespace == "xformOp":
+                    continue
                 if namespace != currentNamespace:
                     label = QLabel(namespace, self._widget)
                     label.setMinimumHeight(38)
                     label.setAlignment(Qt.AlignLeft | Qt.AlignBottom)
-                    label.setStyleSheet(
-                        "border: none; border-bottom: 1px solid #666666;"
-                    )
+                    label.setStyleSheet("border: none; border-bottom: 1px solid #666666;")
                     label.setFont(bold_font)
                     self._layout.addRow(label)
                     currentNamespace = namespace
 
-                attrWidget = AttributeWidget.AttributeWidget(
-                    attr, currentTime, self._widget
-                )
+                attrWidget = AttributeWidget.AttributeWidget(attr, currentTime, self._widget)
                 baseName = attrWidget.labelText(baseName)
-                self._layout.addRow(baseName, attrWidget)
+                label = QLabel(baseName, self)
+                label.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+                self._layout.addRow(label, attrWidget)
                 self._uiWidgets.append(attrWidget)
 
             self.layout().addWidget(self._widget)

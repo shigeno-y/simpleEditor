@@ -1,15 +1,16 @@
 from pathlib import Path
 
 from pxr import Sdf, UsdUtils, Tf
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QIcon
+from PySide2.QtCore import Qt, QSize
 from PySide2.QtWidgets import (
+    QAction,
     QDockWidget,
     QFileDialog,
-    QPushButton,
+    QMenu,
+    QMenuBar,
     QScrollArea,
-    QStyle,
-    QHBoxLayout,
+    QToolBar,
+    QToolButton,
     QVBoxLayout,
     QWidget,
     QInputDialog,
@@ -17,6 +18,7 @@ from PySide2.QtWidgets import (
 )
 
 from . import KeyValueWidget
+from .resources.icons import getIcon
 
 
 class SimpleEditWindow(QDockWidget):
@@ -24,6 +26,8 @@ class SimpleEditWindow(QDockWidget):
         super().__init__(parent, *args, **kwargs)
         self.__rootWidget = QWidget(self)
         self.__layout = QVBoxLayout(self.__rootWidget)
+        self.__layout.setContentsMargins(6, 0, 6, 6)
+        self.__layout.setSpacing(0)
 
         self.setWindowTitle("/")
         self.setFeatures(
@@ -32,26 +36,69 @@ class SimpleEditWindow(QDockWidget):
         self.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
         self.setFloating(True)
         self.setWidget(self.__rootWidget)
+        self.setMinimumWidth(300)
 
-        self.__menu_widget = QWidget(self)
-        self.__menu = QHBoxLayout()
-        self.__menu_widget.setLayout(self.__menu)
-        self.__layout.addWidget(self.__menu_widget)
+        self.__menuBar = QMenuBar(self)
+        # --- Menu: Stage
+        self.__menuStage = QMenu(self)
+        self.__menuStage.setTitle("&Stage")
+        self.__actionSave = QAction("&Save", self)
+        self.__actionSave.setIcon(getIcon("Save"))
+        self.__actionSave.triggered.connect(self.handler_Save)
+        self.__actionSave.setShortcut("Ctrl+S")
+        self.__actionSaveAs = QAction("Save &As...", self)
+        self.__actionSaveAs.setIcon(getIcon("SaveAs"))
+        self.__actionSaveAs.triggered.connect(self.handler_SaveAs)
+        self.__actionSaveAs.setShortcut("Ctrl+Shift+S")
+        self.__menuStage.addAction(self.__actionSave)
+        self.__menuStage.addAction(self.__actionSaveAs)
+        self.__menuBar.addMenu(self.__menuStage)
+        # --- Menu: Prim
+        self.__menuPrim = QMenu(self)
+        self.__menuPrim.setTitle("&Prim")
+        self.__actionAddChildPrimSpec = QAction("&Add child PrimSpec", self)
+        self.__actionAddChildPrimSpec.setIcon(getIcon("AddPrim"))
+        self.__actionAddChildPrimSpec.triggered.connect(self.handler_AddChildPrim)
+        self.__actionRemovePrimSpec = QAction("&Remove PrimSpec", self)
+        self.__actionRemovePrimSpec.setIcon(getIcon("RemovePrim"))
+        self.__actionRemovePrimSpec.triggered.connect(self.handler_RemoveThisPrim)
+        self.__menuPrim.addAction(self.__actionAddChildPrimSpec)
+        self.__menuPrim.addAction(self.__actionRemovePrimSpec)
+        self.__menuBar.addMenu(self.__menuPrim)
+        # ---
+        self.__layout.addWidget(self.__menuBar)
 
-        self.__save_as_button = QPushButton("Save as", self)
-        self.__save_as_button.setIcon(QIcon(self.style().standardIcon(QStyle.SP_DialogSaveButton)))
-        self.__save_as_button.clicked.connect(self.handler_SaveAs)
-        self.__menu.addWidget(self.__save_as_button)
-
-        self.__add_child_prim_button = QPushButton("Add child PrimSpec", self)
-        self.__add_child_prim_button.setIcon(QIcon(self.style().standardIcon(QStyle.SP_ArrowForward)))
-        self.__add_child_prim_button.clicked.connect(self.handler_AddChildPrim)
-        self.__menu.addWidget(self.__add_child_prim_button)
-
-        self.__remove_this_prim_button = QPushButton("Remove PrimSpec", self)
-        self.__remove_this_prim_button.setIcon(QIcon(self.style().standardIcon(QStyle.SP_DialogCloseButton)))
-        self.__remove_this_prim_button.clicked.connect(self.handler_RemoveThisPrim)
-        self.__menu.addWidget(self.__remove_this_prim_button)
+        self.__toolBar = QToolBar(self.__rootWidget)
+        self.__toolBar.setStyleSheet(
+            """
+            QToolButton { border: none; border-radius: 3px; padding: 3px; background: transparent; }
+            QToolButton:hover { background: #303030; }
+            QToolButton:pressed { background: #3F3F3F; }
+        """
+        )
+        self.__toolBar.setIconSize(QSize(16, 16))
+        self.__toolSaveButton = QToolButton(self)
+        self.__toolSaveButton.setText("Save")
+        self.__toolSaveButton.setIcon(getIcon("Save"))
+        self.__toolSaveButton.clicked.connect(self.handler_Save)
+        self.__toolSaveAsButton = QToolButton(self)
+        self.__toolSaveAsButton.setText("Save As")
+        self.__toolSaveAsButton.setIcon(getIcon("SaveAs"))
+        self.__toolSaveAsButton.clicked.connect(self.handler_SaveAs)
+        self.__toolAddChildPrimSpec = QToolButton(self)
+        self.__toolAddChildPrimSpec.setText("Add Child PrimSpec")
+        self.__toolAddChildPrimSpec.setIcon(getIcon("AddPrim"))
+        self.__toolAddChildPrimSpec.clicked.connect(self.handler_AddChildPrim)
+        self.__toolRemovePrimSpec = QToolButton(self)
+        self.__toolRemovePrimSpec.setText("Remove PrimSpec")
+        self.__toolRemovePrimSpec.setIcon(getIcon("RemovePrim"))
+        self.__toolRemovePrimSpec.clicked.connect(self.handler_RemoveThisPrim)
+        self.__toolBar.addWidget(self.__toolSaveButton)
+        self.__toolBar.addWidget(self.__toolSaveAsButton)
+        self.__toolBar.addSeparator()
+        self.__toolBar.addWidget(self.__toolAddChildPrimSpec)
+        self.__toolBar.addWidget(self.__toolRemovePrimSpec)
+        self.__layout.addWidget(self.__toolBar)
 
         self.__scroll = QScrollArea(self)
         self.__scroll.setWidgetResizable(True)
@@ -87,16 +134,7 @@ class SimpleEditWindow(QDockWidget):
         prim = self.__api.stage.GetPrimAtPath(newPrimPath)
         self.__widget.update(prim, time)
 
-    def handler_SaveAs(self):
-        filename, _ = QFileDialog.getSaveFileName(
-            self,
-            "Save as",
-            str(Path(self.__api.stage.GetLayerStack()[-1].realPath).parent),
-            "USD File (*.usd *.usda)",
-        )
-        if not filename:
-            return
-
+    def save(self, filename):
         layer1 = self.__api.stage.GetSessionLayer()
         layer2 = self.__api.stage.GetRootLayer()
 
@@ -110,6 +148,21 @@ class SimpleEditWindow(QDockWidget):
             flatten_layer.subLayerPaths.append(p)
 
         flatten_layer.Export(filename)
+        self.__api.PrintStatus(f"Saved! {filename}")
+
+    def handler_Save(self):
+        self.save(self.__api.stage.GetRootLayer().identifier)
+
+    def handler_SaveAs(self):
+        filename, _ = QFileDialog.getSaveFileName(
+            self,
+            "Save as",
+            str(Path(self.__api.stage.GetLayerStack()[-1].realPath).parent),
+            "USD File (*.usd *.usda)",
+        )
+        if not filename:
+            return
+        self.save(filename)
 
     def handler_RemoveThisPrim(self):
         self.__api.stage.RemovePrim(self.__currentTarget)

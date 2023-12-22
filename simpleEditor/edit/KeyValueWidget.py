@@ -3,6 +3,7 @@ from PySide2.QtWidgets import (
     QFormLayout,
     QLabel,
     QLineEdit,
+    QSizePolicy,
     QVBoxLayout,
     QWidget,
 )
@@ -32,7 +33,7 @@ class KeyValueWidget(QWidget):
                 self._widget.deleteLater()
             self._widget = QWidget(self)
             self._layout = QFormLayout(self._widget)
-            self._layout.setLabelAlignment(Qt.AlignRight)
+            self._layout.setLabelAlignment(Qt.AlignRight | Qt.AlignVCenter)
             self._uiWidgets = list()
 
             self._primTypeWidget = QLineEdit(self)
@@ -44,20 +45,17 @@ class KeyValueWidget(QWidget):
             bold_font.setBold(True)
 
             def sortKey(attr):
-                if attr.GetName() == "xformOpOrder":
-                    return "2xformOp:_front_"
-                else:
-                    return f"{len(attr.GetName().split(':'))}{attr.GetName()}"
+                return f"{len(attr.GetName().split(':', 1))}{attr.GetName()}"
 
             attrs = prim.GetAttributes()
             attrs.sort(key=sortKey)
             currentNamespace = ""
             for attr in attrs:
-                baseName = attr.GetBaseName()
-                if attr.GetName() == "xformOpOrder":
-                    namespace = "xformOp"
-                else:
-                    namespace = attr.GetNamespace()
+                words = attr.GetName().split(":", 1)
+                namespace = words[0] if len(words) == 2 else ""
+                baseName = words[-1]
+                if namespace == "xformOp":
+                    continue
                 if namespace != currentNamespace:
                     label = QLabel(namespace, self._widget)
                     label.setMinimumHeight(38)
@@ -69,7 +67,9 @@ class KeyValueWidget(QWidget):
 
                 attrWidget = AttributeWidget.AttributeWidget(attr, currentTime, self._widget)
                 baseName = attrWidget.labelText(baseName)
-                self._layout.addRow(baseName, attrWidget)
+                label = QLabel(baseName, self)
+                label.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+                self._layout.addRow(label, attrWidget)
                 self._uiWidgets.append(attrWidget)
 
             self.layout().addWidget(self._widget)

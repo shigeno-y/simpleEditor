@@ -11,6 +11,7 @@ from PySide2.QtWidgets import (
 )
 from .SignalBlocker import SignalBlocker
 from .AddXformOpDialog import AddXformOpDialog
+from simpleEditor.edit.resources.icons import getIcon
 
 
 class XformOpWidget(QWidget):
@@ -28,7 +29,7 @@ class XformOpWidget(QWidget):
         self._rootWidget = None
         self._layout = None
         self._addButton = QPushButton()
-        self._addButton.setText("+")
+        self._addButton.setIcon(getIcon("Plus"))
         self._addButton.clicked.connect(self._addXformOp)
         self._currentTime = currentTime
         self._attr = attr
@@ -61,15 +62,15 @@ class XformOpWidget(QWidget):
                     labelText = "[INV]" + labelText
                 label.setText(labelText)
                 fwdButton = QToolButton(self._rootWidget)
-                fwdButton.setText("↑")
+                fwdButton.setIcon(getIcon("UpArrow"))
                 fwdButton.setVisible(row > 0)
                 fwdButton.clicked.connect(lambda *, r=row, f=-1: self._moveOp(r, f))
                 backButton = QToolButton(self._rootWidget)
-                backButton.setText("↓")
+                backButton.setIcon(getIcon("DownArrow"))
                 backButton.setVisible(row < (rowCount - 1))
                 backButton.clicked.connect(lambda *, r=row, f=1: self._moveOp(r, f))
                 removeButton = QToolButton(self._rootWidget)
-                removeButton.setText("×")
+                removeButton.setIcon(getIcon("Cross"))
                 removeButton.clicked.connect(lambda *, r=row: self._removeOp(r))
                 opWidget = AttributeWidget(opAttr, currentTime, self._rootWidget)
                 if hasattr(opWidget.getWidget(), "valueChanged"):

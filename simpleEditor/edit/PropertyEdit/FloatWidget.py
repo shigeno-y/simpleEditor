@@ -2,6 +2,7 @@ from pxr import (
     Gf,
     Sdf,
 )
+from PySide2.QtCore import Signal
 from PySide2.QtWidgets import (
     QHBoxLayout,
     QWidget,
@@ -38,6 +39,8 @@ class FloatWidget(ExpressionFloatLineEdit):
 
 
 class Float2Widget(QWidget):
+    valueChanged = Signal(float, float)
+
     def __init__(self, attr, currentTime, parent):
         super().__init__(parent)
         self._layout = QHBoxLayout(self)
@@ -53,7 +56,9 @@ class Float2Widget(QWidget):
         self.sync(currentTime)
 
     def _onValueChanged(self, _):
-        self._attr.Set(self.value())
+        value = self.value()
+        self._attr.Set(value)
+        self.valueChanged.emit(value[0], value[1])
 
     def value(self):
         return _type2ReturnCls[self._attr.GetTypeName()](self._widgetX.value(), self._widgetY.value())
@@ -72,6 +77,8 @@ class Float2Widget(QWidget):
 
 
 class Float3Widget(QWidget):
+    valueChanged = Signal(float, float, float)
+
     def __init__(self, attr, currentTime, parent):
         super().__init__(parent)
         self._layout = QHBoxLayout(self)
@@ -90,7 +97,9 @@ class Float3Widget(QWidget):
         self.sync(currentTime)
 
     def _onValueChanged(self, _):
-        self._attr.Set(self.value())
+        value = self.value()
+        self._attr.Set(value)
+        self.valueChanged.emit(value[0], value[1], value[2])
 
     def value(self):
         return _type2ReturnCls[self._attr.GetTypeName()](
@@ -113,6 +122,8 @@ class Float3Widget(QWidget):
 
 
 class Float4Widget(QWidget):
+    valueChanged = Signal(float, float, float, float)
+
     def __init__(self, attr, currentTime, parent):
         super().__init__(parent)
         self._layout = QHBoxLayout(self)
@@ -134,7 +145,9 @@ class Float4Widget(QWidget):
         self.sync(currentTime)
 
     def _onValueChanged(self, _):
-        self._attr.Set(self.value())
+        value = self.value()
+        self._attr.Set(value)
+        self.valueChanged.emit(value[0], value[1], value[2], value[3])
 
     def value(self):
         return _type2ReturnCls[self._attr.GetTypeName()](

@@ -6,10 +6,15 @@ class TokenValidator(QValidator):
     """USD の Token に対する Validator."""
 
     def fixup(self, inStr: str):
-        return Tf.MakeValidIdentifier(inStr)
+        if inStr:
+            return Tf.MakeValidIdentifier(inStr)
+        else:
+            return ""
 
     def validate(self, inStr, _):
-        if Tf.IsValidIdentifier(inStr):
+        if not inStr:
+            return QValidator.State.Intermidiate
+        elif Tf.IsValidIdentifier(inStr):
             return QValidator.State.Acceptable
         else:
             return QValidator.State.Invalid

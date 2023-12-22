@@ -60,9 +60,6 @@ class AddXformOpDialog:
         self._ui.accept()
 
     @classmethod
-    def addXformOp(cls, parent, prim) -> bool:
-        if prim.IsA(UsdGeom.Xformable):
-            dialog = cls(parent, UsdGeom.Xformable(prim))
-            if dialog._ui.exec_():
-                return True
-        return False
+    def addXformOp(cls, parent, xformable) -> bool:
+        dialog = cls(parent, xformable)
+        return bool(dialog._ui.exec_())

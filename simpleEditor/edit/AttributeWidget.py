@@ -136,6 +136,9 @@ class AttributeWidget(QWidget):
         else:
             self._stackedWidget.setCurrentWidget(self._unauthoredWidget)
 
+    def getWidget(self):
+        return self._widget
+
     def setCurrentTime(self, currentTime):
         self._currentTime = currentTime
         self._sync()

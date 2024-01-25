@@ -1,11 +1,16 @@
+# SPDX-License-Identifier: Apache-2.0
+
+
 from pathlib import Path
 
-from pxr import Sdf, UsdUtils, Tf
-from PySide2.QtCore import Qt, QSize
+from pxr import Sdf, Tf, UsdUtils
+from PySide2.QtCore import QSize, Qt
 from PySide2.QtWidgets import (
     QAction,
     QDockWidget,
     QFileDialog,
+    QInputDialog,
+    QLineEdit,
     QMenu,
     QMenuBar,
     QScrollArea,
@@ -13,8 +18,6 @@ from PySide2.QtWidgets import (
     QToolButton,
     QVBoxLayout,
     QWidget,
-    QInputDialog,
-    QLineEdit,
 )
 
 from . import KeyValueWidget

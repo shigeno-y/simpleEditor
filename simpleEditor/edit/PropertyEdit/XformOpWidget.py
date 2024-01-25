@@ -1,17 +1,22 @@
-from pxr import UsdGeom, Sdf
+# SPDX-License-Identifier: Apache-2.0
+
+
+from pxr import Sdf, UsdGeom
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
+    QFrame,
     QGridLayout,
     QLabel,
-    QFrame,
     QPushButton,
     QToolButton,
     QVBoxLayout,
     QWidget,
 )
-from .SignalBlocker import SignalBlocker
-from .AddXformOpDialog import AddXformOpDialog
+
 from simpleEditor.edit.resources.icons import getIcon
+
+from .AddXformOpDialog import AddXformOpDialog
+from .SignalBlocker import SignalBlocker
 
 
 class XformOpWidget(QWidget):

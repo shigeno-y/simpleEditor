@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+
+
 from PySide2.QtCore import (
     Qt,
     Signal,
@@ -9,6 +12,7 @@ from PySide2.QtGui import (
 from PySide2.QtWidgets import (
     QLineEdit,
 )
+
 from .SignalBlocker import SignalBlocker
 
 

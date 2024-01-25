@@ -1,8 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+
+
 from .ArrayWidget import ArrayWidget
 from .AssetWidget import AssetWidget
 from .BoolWidget import BoolWidget
 from .ColorPickerWidget import ColorPickerWidget
-from .FloatWidget import FloatWidget, Float2Widget, Float3Widget, Float4Widget
+from .FloatWidget import Float2Widget, Float3Widget, Float4Widget, FloatWidget
 from .IntWidget import IntWidget
 from .StringWidget import StringWidget
 from .TokenValidator import TokenValidator

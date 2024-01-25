@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: usdMMDPlugins-LICENSE-1
+# SPDX-License-Identifier: Apache-2.0
 
 from conan.tools.env import VirtualRunEnv
 from conans import ConanFile
@@ -30,7 +30,6 @@ class SimpleEditorDevConan(ConanFile):
         self.options["usdmmdplugins"].USD = self.options.USD
         self.options["usdmmdplugins"].build_tools = True
         self.options["usdmmdplugins"].enable_physic_bake = True
-        self.options["usdmmdplugins"].python = True
         self.options["openusd"].python = True
 
     def generate(self):

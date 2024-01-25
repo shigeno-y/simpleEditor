@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+
+
 from pathlib import Path
 
 from pxr import (
@@ -38,9 +41,7 @@ class AssetWidget(QWidget):
         super().__init__(parent)
         self._layout = QHBoxLayout(self)
         self._openAsset = QPushButton("", self)
-        self._openAsset.setIcon(
-            QIcon(self.style().standardIcon(QStyle.SP_ArrowForward))
-        )
+        self._openAsset.setIcon(QIcon(self.style().standardIcon(QStyle.SP_ArrowForward)))
         self._openAsset.clicked.connect(self.handlerAssetPicker)
         self._assetPath = QLineEdit(self)
         self._layout.addWidget(self._openAsset)

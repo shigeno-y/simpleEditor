@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+
+
 from pxr import (
     Gf,
 )
@@ -27,8 +30,9 @@ from PySide2.QtWidgets import (
     QStyle,
     QWidget,
 )
-from .SignalBlocker import SignalBlocker
+
 from .ExpressionFloatLineEdit import ExpressionFloatLineEdit
+from .SignalBlocker import SignalBlocker
 
 
 class ColorPickerWidget(QWidget):
@@ -36,9 +40,7 @@ class ColorPickerWidget(QWidget):
         super().__init__(parent)
         self._layout = QHBoxLayout(self)
         self._openColorPicker = QPushButton("", self)
-        self._openColorPicker.setIcon(
-            QIcon(self.style().standardIcon(QStyle.SP_ArrowForward))
-        )
+        self._openColorPicker.setIcon(QIcon(self.style().standardIcon(QStyle.SP_ArrowForward)))
         self._openColorPicker.clicked.connect(self.handlerColorPicker)
 
         self._widgetR = ExpressionFloatLineEdit(self)
@@ -107,9 +109,7 @@ class ColorPickerWidget(QWidget):
             self._attr.Set(self.value())
 
     def value(self):
-        return Gf.Vec3f(
-            self._widgetR.value(), self._widgetG.value(), self._widgetB.value()
-        )
+        return Gf.Vec3f(self._widgetR.value(), self._widgetG.value(), self._widgetB.value())
 
     def setValue(self, value):
         with SignalBlocker(self._widgetR):

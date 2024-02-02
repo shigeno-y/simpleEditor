@@ -1,7 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+
+
 import os
-from pxr import UsdGeom, Tf
+
+from pxr import Tf, UsdGeom
 from PySide2.QtUiTools import QUiLoader
 from PySide2.QtWidgets import QMessageBox
+
 from .TokenValidator import TokenValidator
 
 

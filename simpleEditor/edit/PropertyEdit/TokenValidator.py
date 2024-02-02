@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+
+
 from pxr import Tf
 from PySide2.QtGui import QValidator
 

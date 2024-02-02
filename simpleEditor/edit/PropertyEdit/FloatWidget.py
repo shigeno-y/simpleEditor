@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+
+
 from pxr import (
     Gf,
     Sdf,
@@ -7,9 +10,9 @@ from PySide2.QtWidgets import (
     QHBoxLayout,
     QWidget,
 )
-from .SignalBlocker import SignalBlocker
-from .ExpressionFloatLineEdit import ExpressionFloatLineEdit
 
+from .ExpressionFloatLineEdit import ExpressionFloatLineEdit
+from .SignalBlocker import SignalBlocker
 
 _type2ReturnCls = {
     Sdf.ValueTypeNames.Double2: Gf.Vec2d,

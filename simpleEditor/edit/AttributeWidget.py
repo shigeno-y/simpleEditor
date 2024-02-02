@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+
+
 from pxr import Gf, Sdf, UsdGeom
 from PySide2.QtWidgets import (
     QAction,

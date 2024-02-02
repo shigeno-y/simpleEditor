@@ -1,5 +1,8 @@
-from .SignalBlocker import SignalBlocker
+# SPDX-License-Identifier: Apache-2.0
+
+
 from .ExpressionIntLineEdit import ExpressionIntLineEdit
+from .SignalBlocker import SignalBlocker
 
 
 class IntWidget(ExpressionIntLineEdit):

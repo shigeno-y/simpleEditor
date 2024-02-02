@@ -1,4 +1,8 @@
+# SPDX-License-Identifier: Apache-2.0
+
+
 from PySide2.QtWidgets import QComboBox
+
 from .SignalBlocker import SignalBlocker
 
 

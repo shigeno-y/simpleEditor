@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+
+
 _icons = dict()
 
 
@@ -28,8 +31,8 @@ def getIcon(name):
     }
 
     if name not in _icons:
-        import os
         import glob
+        import os
 
         rootDir = os.path.dirname(__file__)
         files = glob.glob(os.path.join(rootDir, f"{name}_*.png"))

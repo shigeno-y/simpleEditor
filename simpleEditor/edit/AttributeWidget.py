@@ -10,13 +10,14 @@ from PySide2.QtWidgets import (
 )
 
 from .PropertyEdit import (
+    ArrayWidget,
     AssetWidget,
     BoolWidget,
     ColorPickerWidget,
-    FloatWidget,
     Float2Widget,
     Float3Widget,
     Float4Widget,
+    FloatWidget,
     IntWidget,
     StringWidget,
     TokenWidget,
@@ -56,7 +57,6 @@ _type2defaultValue = {
     Sdf.ValueTypeNames.Token: "",
     Sdf.ValueTypeNames.Bool: False,
     Sdf.ValueTypeNames.Color3f: Gf.Vec3f(),
-    Sdf.ValueTypeNames.TokenArray: list(),
 }
 
 
@@ -72,21 +72,28 @@ class AttributeWidget(QWidget):
         self._unauthoredWidget = QPushButton(self._stackedWidget)
         self._unauthoredWidget.setText("None")
         self._unauthoredWidget.setStyleSheet("text-align: left;")
-        if self._attr.GetTypeName() not in _type2defaultValue:
+        if self._attr.GetTypeName() not in _type2defaultValue and not self._attr.GetTypeName().isArray:
             self._unauthoredWidget.setEnabled(False)
             self._unauthoredWidget.setText("None (Unsupported Type.)")
         self._unauthoredWidget.clicked.connect(self._authorDefaultValue)
         self._stackedWidget.addWidget(self._unauthoredWidget)
 
         # Editor Widget
-        widgetClass = None
+        widgetArgs = [attr, currentTime, self._stackedWidget]
+        widgetClass = UnsupportedAttributeWidget
         if attr.GetPrim().IsA(UsdGeom.Xformable) and UsdGeom.Xformable(attr.GetPrim()).GetXformOpOrderAttr() == attr:
             # xformOpOrder の特殊対応
             widgetClass = XformOpWidget
         else:
-            widgetClass = _type2widget.get(attr.GetTypeName(), UnsupportedAttributeWidget)
-        self._widget = widgetClass(attr, currentTime, self._stackedWidget)
+            typeName = attr.GetTypeName()
+            if typeName in _type2widget:
+                widgetClass = _type2widget[typeName]
+            elif typeName.isArray and typeName.scalarType in _type2widget:
+                widgetClass = ArrayWidget
+                widgetArgs.append(_type2widget[typeName.scalarType])
+        self._widget = widgetClass(*widgetArgs)
         self._stackedWidget.addWidget(self._widget)
+        self._widget.setVisible(False)
         self._optionButton = QToolButton(self)
         self._optionButton.setText("...")
 
@@ -124,7 +131,12 @@ class AttributeWidget(QWidget):
         self._sync()
 
     def _authorDefaultValue(self):
-        defaultValue = _type2defaultValue.get(self._attr.GetTypeName(), None)
+        defaultValue = None
+        typeName = self._attr.GetTypeName()
+        if typeName in _type2defaultValue:
+            defaultValue = _type2defaultValue[typeName]
+        elif typeName.isArray:
+            defaultValue = list()
         if defaultValue is not None:
             self._attr.Set(defaultValue)
             self._sync()

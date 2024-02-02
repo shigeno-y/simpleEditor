@@ -44,6 +44,7 @@ class SimpleEditorDevConan(ConanFile):
         self.version = tag
 
     def export_sources(self):
+        copy(self, "plugInfo.json", self.recipe_folder, self.export_sources_folder)
         copy(self, "simpleEditor/**", self.recipe_folder, self.export_sources_folder, excludes="**/__pycache__")
 
     def requirements(self):
@@ -53,18 +54,18 @@ class SimpleEditorDevConan(ConanFile):
         self.options["openusd"].python = True
 
     def package(self):
-        # This will also copy the "include" folder
+        copy(self, "plugInfo.json", self.source_folder, self.package_folder)
         copy(self, "simpleEditor/*", self.source_folder, self.package_folder, excludes="**/__pycache__")
 
     def package_info(self):
         self.cpp_info.bindirs = list()
         self.cpp_info.libdirs = list()
 
-        self.buildenv_info.prepend_path("PYTHONPATH", str(Path(self.package_folder) / Path("lib/python")))
-        self.runenv_info.prepend_path("PYTHONPATH", str(Path(self.package_folder) / Path("lib/python")))
+        self.buildenv_info.prepend_path("PYTHONPATH", str(Path(self.package_folder)))
+        self.runenv_info.prepend_path("PYTHONPATH", str(Path(self.package_folder)))
 
-        self.buildenv_info.prepend_path("PXR_PLUGINPATH_NAME", str(Path(self.package_folder) / Path("plugin/usd")))
-        self.runenv_info.prepend_path("PXR_PLUGINPATH_NAME", str(Path(self.package_folder) / Path("plugin/usd")))
+        self.buildenv_info.prepend_path("PXR_PLUGINPATH_NAME", str(Path(self.package_folder)))
+        self.runenv_info.prepend_path("PXR_PLUGINPATH_NAME", str(Path(self.package_folder)))
 
         for require, dependency in self.dependencies.items():
             binDir = Path(dependency.package_folder) / "bin"

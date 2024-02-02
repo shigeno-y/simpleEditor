@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+
+
 from pxr import Sdf
 from PySide2.QtCore import QAbstractTableModel, Qt
 from PySide2.QtGui import QBrush, QColor

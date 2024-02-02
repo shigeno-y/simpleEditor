@@ -1,4 +1,6 @@
 /hooks export-ignore
+/usage export-ignore
 /.* export-ignore
 /conanfile.py export-ignore
 /pip-requirements.txt export-ignore
+/pyproject.toml export-ignore

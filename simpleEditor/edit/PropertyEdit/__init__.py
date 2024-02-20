@@ -10,5 +10,6 @@ from .IntWidget import IntWidget
 from .StringWidget import StringWidget
 from .TokenValidator import TokenValidator
 from .TokenWidget import TokenWidget
+from .UIntWidget import UIntWidget
 from .UnsupportedAttributeWidget import UnsupportedAttributeWidget
 from .XformOpWidget import XformOpWidget

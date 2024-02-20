@@ -24,6 +24,7 @@ from .PropertyEdit import (
     IntWidget,
     StringWidget,
     TokenWidget,
+    UIntWidget,
     UnsupportedAttributeWidget,
     XformOpWidget,
 )
@@ -39,7 +40,7 @@ _type2widget = {
     Sdf.ValueTypeNames.Double3: Float3Widget,
     Sdf.ValueTypeNames.Double4: Float4Widget,
     Sdf.ValueTypeNames.Int: IntWidget,
-    Sdf.ValueTypeNames.UInt: IntWidget,
+    Sdf.ValueTypeNames.UInt: UIntWidget,
     Sdf.ValueTypeNames.String: StringWidget,
     Sdf.ValueTypeNames.Token: TokenWidget,
     Sdf.ValueTypeNames.Bool: BoolWidget,

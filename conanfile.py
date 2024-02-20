@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from conan.tools.files import copy
-from conan.tools.scm import Git
+from conan.tools.scm import Git, Version
 from conans import ConanFile
 
 
@@ -37,10 +37,16 @@ class SimpleEditorDevConan(ConanFile):
         git = Git(self, self.recipe_folder)
 
         tag = "0.1.0"
+        diff = 0
         try:
             tag = git.run("describe --tags --abbrev=0")
+            diff = int(git.run("rev-list --count 1.0.0..HEAD"))
+            if diff > 0:
+                v = Version(tag).bump(2)
+                tag = str(v) + "-dev"
         except Exception:
             pass
+
         self.version = tag
 
     def export_sources(self):

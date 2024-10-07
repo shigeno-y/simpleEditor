@@ -5,8 +5,8 @@ from pxr import (
     Gf,
     Sdf,
 )
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import (
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import (
     QHBoxLayout,
     QWidget,
 )
@@ -51,7 +51,7 @@ class Float2Widget(QWidget):
         self._widgetY = ExpressionFloatLineEdit(self)
         self._layout.addWidget(self._widgetX)
         self._layout.addWidget(self._widgetY)
-        self._layout.setMargin(0)
+        self._layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self._layout)
         self._widgetX.valueChanged.connect(self._onValueChanged)
         self._widgetY.valueChanged.connect(self._onValueChanged)
@@ -64,7 +64,9 @@ class Float2Widget(QWidget):
         self.valueChanged.emit(value[0], value[1])
 
     def value(self):
-        return _type2ReturnCls[self._attr.GetTypeName()](self._widgetX.value(), self._widgetY.value())
+        return _type2ReturnCls[self._attr.GetTypeName()](
+            self._widgetX.value(), self._widgetY.value()
+        )
 
     def setValue(self, value):
         with SignalBlocker(self._widgetX):
@@ -91,7 +93,7 @@ class Float3Widget(QWidget):
         self._layout.addWidget(self._widgetX)
         self._layout.addWidget(self._widgetY)
         self._layout.addWidget(self._widgetZ)
-        self._layout.setMargin(0)
+        self._layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self._layout)
         self._widgetX.valueChanged.connect(self._onValueChanged)
         self._widgetY.valueChanged.connect(self._onValueChanged)
@@ -138,7 +140,7 @@ class Float4Widget(QWidget):
         self._layout.addWidget(self._widgetY)
         self._layout.addWidget(self._widgetZ)
         self._layout.addWidget(self._widgetW)
-        self._layout.setMargin(0)
+        self._layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self._layout)
         self._widgetX.valueChanged.connect(self._onValueChanged)
         self._widgetY.valueChanged.connect(self._onValueChanged)

@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import (
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
     QFormLayout,
     QLabel,
     QLineEdit,
@@ -63,12 +63,16 @@ class KeyValueWidget(QWidget):
                     label = QLabel(namespace, self._widget)
                     label.setMinimumHeight(38)
                     label.setAlignment(Qt.AlignLeft | Qt.AlignBottom)
-                    label.setStyleSheet("border: none; border-bottom: 1px solid #666666;")
+                    label.setStyleSheet(
+                        "border: none; border-bottom: 1px solid #666666;"
+                    )
                     label.setFont(bold_font)
                     self._layout.addRow(label)
                     currentNamespace = namespace
 
-                attrWidget = AttributeWidget.AttributeWidget(attr, currentTime, self._widget)
+                attrWidget = AttributeWidget.AttributeWidget(
+                    attr, currentTime, self._widget
+                )
                 baseName = attrWidget.labelText(baseName)
                 label = QLabel(baseName, self)
                 label.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)

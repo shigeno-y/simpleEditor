@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from PySide2.QtWidgets import QCheckBox
+from PySide6.QtWidgets import QCheckBox
 
 from .SignalBlocker import SignalBlocker
 

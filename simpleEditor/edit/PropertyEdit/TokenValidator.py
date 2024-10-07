@@ -2,7 +2,7 @@
 
 
 from pxr import Tf
-from PySide2.QtGui import QValidator
+from PySide6.QtGui import QValidator
 
 
 class TokenValidator(QValidator):

@@ -2,8 +2,8 @@
 
 
 from pxr import Sdf, UsdGeom
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import (
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
     QFrame,
     QGridLayout,
     QLabel,
@@ -30,7 +30,7 @@ class XformOpWidget(QWidget):
         )
         self.setContentsMargins(0, 0, 0, 0)
         self.setLayout(QVBoxLayout())
-        self.layout().setMargin(0)
+        self.layout().setContentsMargins(0, 0, 0, 0)
         self._rootWidget = None
         self._layout = None
         self._addButton = QPushButton()
@@ -85,7 +85,9 @@ class XformOpWidget(QWidget):
                 self._layout.addWidget(label, row, 2, Qt.AlignVCenter | Qt.AlignRight)
                 self._layout.addWidget(opWidget, row, 3)
                 self._layout.addWidget(removeButton, row, 4)
-                self._ops.append((op, opWidget, fwdButton, backButton, label, removeButton))
+                self._ops.append(
+                    (op, opWidget, fwdButton, backButton, label, removeButton)
+                )
             self._layout.addWidget(self._addButton, rowCount, 2)
             self._layout.setColumnStretch(3, 1)
             self.layout().addWidget(self._rootWidget)

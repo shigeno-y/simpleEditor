@@ -2,8 +2,8 @@
 
 
 from pxr import Gf, Sdf, UsdGeom
-from PySide2.QtWidgets import (
-    QAction,
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import (
     QHBoxLayout,
     QMenu,
     QPushButton,
@@ -78,7 +78,10 @@ class AttributeWidget(QWidget):
         self._unauthoredWidget = QPushButton(self._stackedWidget)
         self._unauthoredWidget.setText("None")
         self._unauthoredWidget.setStyleSheet("text-align: left;")
-        if self._attr.GetTypeName() not in _type2defaultValue and not self._attr.GetTypeName().isArray:
+        if (
+            self._attr.GetTypeName() not in _type2defaultValue
+            and not self._attr.GetTypeName().isArray
+        ):
             self._unauthoredWidget.setEnabled(False)
             self._unauthoredWidget.setText("None (Unsupported Type.)")
         self._unauthoredWidget.clicked.connect(self._authorDefaultValue)
@@ -87,7 +90,10 @@ class AttributeWidget(QWidget):
         # Editor Widget
         widgetArgs = [attr, currentTime, self._stackedWidget]
         widgetClass = UnsupportedAttributeWidget
-        if attr.GetPrim().IsA(UsdGeom.Xformable) and UsdGeom.Xformable(attr.GetPrim()).GetXformOpOrderAttr() == attr:
+        if (
+            attr.GetPrim().IsA(UsdGeom.Xformable)
+            and UsdGeom.Xformable(attr.GetPrim()).GetXformOpOrderAttr() == attr
+        ):
             # xformOpOrder の特殊対応
             widgetClass = XformOpWidget
         else:
@@ -118,7 +124,7 @@ class AttributeWidget(QWidget):
 
         self.setContentsMargins(0, 0, 0, 0)
         self.setLayout(QHBoxLayout(self))
-        self.layout().setMargin(0)
+        self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().addWidget(self._optionButton)
         self.layout().addWidget(self._stackedWidget)
 
@@ -162,4 +168,8 @@ class AttributeWidget(QWidget):
         self._sync()
 
     def labelText(self, defaultValue):
-        return self._widget.labelText() if hasattr(self._widget, "labelText") else defaultValue
+        return (
+            self._widget.labelText()
+            if hasattr(self._widget, "labelText")
+            else defaultValue
+        )

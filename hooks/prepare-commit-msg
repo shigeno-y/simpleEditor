@@ -66,7 +66,7 @@ for f in $(git diff --cached --name-only --diff-filter=AMR $against); do
 		$cmake_format_exec -i $f 2>&1 >> $tmpfile
 	elif [[ $f =~ py$ ]]
 	then
-		python -m ruff -q $f 2>&1 >> $tmpfile
+		python -m ruff check -q $f 2>&1 >> $tmpfile
 	fi
 done
 

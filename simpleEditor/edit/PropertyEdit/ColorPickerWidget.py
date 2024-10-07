@@ -4,12 +4,12 @@
 from pxr import (
     Gf,
 )
-from PySide2.QtCore import (
+from PySide6.QtCore import (
     QSignalBlocker,
     Qt,
     Signal,
 )
-from PySide2.QtGui import (
+from PySide6.QtGui import (
     QColor,
     # QValidator,      # TEMP: Expression を実装するときに使用する.
     QDoubleValidator,  # TEMP: Expression を実装したら使用しなくなる.
@@ -19,7 +19,7 @@ from PySide2.QtGui import (
     QPainter,
     QPixmap,
 )
-from PySide2.QtWidgets import (
+from PySide6.QtWidgets import (
     QCheckBox,
     QColorDialog,
     QComboBox,
@@ -40,7 +40,9 @@ class ColorPickerWidget(QWidget):
         super().__init__(parent)
         self._layout = QHBoxLayout(self)
         self._openColorPicker = QPushButton("", self)
-        self._openColorPicker.setIcon(QIcon(self.style().standardIcon(QStyle.SP_ArrowForward)))
+        self._openColorPicker.setIcon(
+            QIcon(self.style().standardIcon(QStyle.SP_ArrowForward))
+        )
         self._openColorPicker.clicked.connect(self.handlerColorPicker)
 
         self._widgetR = ExpressionFloatLineEdit(self)
@@ -50,7 +52,7 @@ class ColorPickerWidget(QWidget):
         self._layout.addWidget(self._widgetR)
         self._layout.addWidget(self._widgetG)
         self._layout.addWidget(self._widgetB)
-        self._layout.setMargin(0)
+        self._layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self._layout)
         self._widgetR.valueChanged.connect(self._onValueChanged)
         self._widgetG.valueChanged.connect(self._onValueChanged)
@@ -109,7 +111,9 @@ class ColorPickerWidget(QWidget):
             self._attr.Set(self.value())
 
     def value(self):
-        return Gf.Vec3f(self._widgetR.value(), self._widgetG.value(), self._widgetB.value())
+        return Gf.Vec3f(
+            self._widgetR.value(), self._widgetG.value(), self._widgetB.value()
+        )
 
     def setValue(self, value):
         with SignalBlocker(self._widgetR):
@@ -125,7 +129,7 @@ class ColorPickerWidget(QWidget):
             self.setValue(self._attr.Get(self._currentTime))
 
     def handlerColorPicker(self):
-        c = QColorDialog.getColor(QColor(QColor.ExtendedRgb, *self.value()))
+        c = QColorDialog.getColor(QColor.fromRgbF(*self.value()))
         if c is not None:
             col = c.toRgb()
             self.setValue(Gf.Vec3f(col.redF(), col.greenF(), col.blueF()))

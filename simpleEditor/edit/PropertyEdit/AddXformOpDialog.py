@@ -4,15 +4,17 @@
 import os
 
 from pxr import Tf, UsdGeom
-from PySide2.QtUiTools import QUiLoader
-from PySide2.QtWidgets import QMessageBox
+from PySide6.QtUiTools import QUiLoader
+from PySide6.QtWidgets import QMessageBox
 
 from .TokenValidator import TokenValidator
 
 
 class AddXformOpDialog:
     def __init__(self, parent, xformable):
-        self._ui = QUiLoader().load(os.path.join(os.path.dirname(__file__), "AddXformOpDialog.ui"), parent)
+        self._ui = QUiLoader().load(
+            os.path.join(os.path.dirname(__file__), "AddXformOpDialog.ui"), parent
+        )
         self._xformable = xformable
         self._validator = TokenValidator()
         self._ui.setWindowTitle("Add XformOp")
@@ -32,29 +34,49 @@ class AddXformOpDialog:
         try:
             if self._ui.rbTranslateOp.isChecked():
                 self._xformable.AddTranslateOp(
-                    precision if precision is not None else UsdGeom.XformOp.PrecisionDouble, suffix, isInverse
+                    precision
+                    if precision is not None
+                    else UsdGeom.XformOp.PrecisionDouble,
+                    suffix,
+                    isInverse,
                 )
 
             elif self._ui.rbScaleOp.isChecked():
                 self._xformable.AddScaleOp(
-                    precision if precision is not None else UsdGeom.XformOp.PrecisionFloat, suffix, isInverse
+                    precision
+                    if precision is not None
+                    else UsdGeom.XformOp.PrecisionFloat,
+                    suffix,
+                    isInverse,
                 )
 
             elif self._ui.rbRotateOp.isChecked():
                 orderText = self._ui.cbOrder.currentText()
                 addFuncName = f"AddRotate{orderText}Op"
                 getattr(self._xformable, addFuncName)(
-                    precision if precision is not None else UsdGeom.XformOp.PrecisionFloat, suffix, isInverse
+                    precision
+                    if precision is not None
+                    else UsdGeom.XformOp.PrecisionFloat,
+                    suffix,
+                    isInverse,
                 )
 
             elif self._ui.rbOrientOp.isChecked():
                 self._xformable.AddOrientOp(
-                    precision if precision is not None else UsdGeom.XformOp.PrecisionFloat, suffix, isInverse
+                    precision
+                    if precision is not None
+                    else UsdGeom.XformOp.PrecisionFloat,
+                    suffix,
+                    isInverse,
                 )
 
             elif self._ui.rbTransform.isChecked():
                 self._xformable.AddTransformOp(
-                    precision if precision is not None else UsdGeom.XformOp.PrecisionDouble, suffix, isInverse
+                    precision
+                    if precision is not None
+                    else UsdGeom.XformOp.PrecisionDouble,
+                    suffix,
+                    isInverse,
                 )
             else:
                 return

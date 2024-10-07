@@ -4,9 +4,9 @@
 from pathlib import Path
 
 from pxr import Sdf, Tf, UsdUtils
-from PySide2.QtCore import QSize, Qt
-from PySide2.QtWidgets import (
-    QAction,
+from PySide6.QtCore import QSize, Qt
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import (
     QDockWidget,
     QFileDialog,
     QInputDialog,
@@ -34,7 +34,9 @@ class SimpleEditWindow(QDockWidget):
 
         self.setWindowTitle("/")
         self.setFeatures(
-            QDockWidget.DockWidgetClosable | QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable
+            QDockWidget.DockWidgetClosable
+            | QDockWidget.DockWidgetMovable
+            | QDockWidget.DockWidgetFloatable
         )
         self.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
         self.setFloating(True)
@@ -113,8 +115,12 @@ class SimpleEditWindow(QDockWidget):
         self.__api = usdviewApi
         self.__currentTarget = "/"
 
-        self.__api.dataModel.selection.signalPrimSelectionChanged.connect(self.slotPrimSelectionChanged)
-        self.__api._UsdviewApi__appController._ui.frameSlider.valueChanged.connect(self.slotTimecodeChanged)
+        self.__api.dataModel.selection.signalPrimSelectionChanged.connect(
+            self.slotPrimSelectionChanged
+        )
+        self.__api._UsdviewApi__appController._ui.frameSlider.valueChanged.connect(
+            self.slotTimecodeChanged
+        )
 
     def slotPrimSelectionChanged(self, newPrimPath=None, oldPrimPath=None):
         if newPrimPath is None or len(newPrimPath) < 1:
@@ -171,12 +177,18 @@ class SimpleEditWindow(QDockWidget):
         self.__api.stage.RemovePrim(self.__currentTarget)
 
     def handler_AddChildPrim(self):
-        text, ok = QInputDialog().getText(self, "New PrimSpec Name", "", QLineEdit.Normal)
+        text, ok = QInputDialog().getText(
+            self, "New PrimSpec Name", "", QLineEdit.Normal
+        )
         if ok and Tf.IsValidIdentifier(text):
-            prim = self.__api.stage.DefinePrim(self.__api.prim.GetPath().AppendChild(text))
+            prim = self.__api.stage.DefinePrim(
+                self.__api.prim.GetPath().AppendChild(text)
+            )
             self.__api._UsdviewApi__appController._resetPrimView()
             self.__api.ClearPrimSelection()
-            self.__api._UsdviewApi__appController._updatePrimViewSelection([prim.GetPath()], ["/"])
+            self.__api._UsdviewApi__appController._updatePrimViewSelection(
+                [prim.GetPath()], ["/"]
+            )
             self.__api._UsdviewApi__appController._ui.primView.ExpandItemRecursively(
                 self.__api._UsdviewApi__appController._getItemAtPath(prim.GetPath())
             )

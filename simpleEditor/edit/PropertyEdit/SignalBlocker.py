@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from PySide2.QtCore import QSignalBlocker
+from PySide6.QtCore import QSignalBlocker
 
 
 class SignalBlocker:

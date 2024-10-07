@@ -14,8 +14,8 @@ def getIcon(name):
     TYPENAME: nf, nn, df, dn, af, an, sf, sn のいずれか.
     SIZE: 数値[px]. 正方形アイコンの一辺の長さ. (長方形には必要になったら対応.)
     """
-    from PySide2.QtCore import QSize
-    from PySide2.QtGui import QIcon
+    from PySide6.QtCore import QSize
+    from PySide6.QtGui import QIcon
 
     global _icons
 
@@ -42,7 +42,9 @@ def getIcon(name):
 
         for filename in files:
             try:
-                _, typeName, size = os.path.splitext(os.path.basename(filename))[0].split("_", 3)
+                _, typeName, size = os.path.splitext(os.path.basename(filename))[
+                    0
+                ].split("_", 3)
                 iconMode, iconState = _str2typeMap[typeName]
                 size = int(size)
                 icon.addFile(filename, QSize(size, size), iconMode, iconState)

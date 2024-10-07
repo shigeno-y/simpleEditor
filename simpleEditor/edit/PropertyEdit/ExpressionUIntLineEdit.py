@@ -1,15 +1,15 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from PySide2.QtCore import (
+from PySide6.QtCore import (
     Qt,
     Signal,
 )
-from PySide2.QtGui import (
+from PySide6.QtGui import (
     # QValidator,      # TEMP: Expression を実装するときに使用する.
     QIntValidator,  # TEMP: Expression を実装したら使用しなくなる.
 )
-from PySide2.QtWidgets import (
+from PySide6.QtWidgets import (
     QLineEdit,
 )
 

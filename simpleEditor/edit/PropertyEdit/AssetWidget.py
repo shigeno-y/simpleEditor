@@ -6,12 +6,12 @@ from pathlib import Path
 from pxr import (
     Gf,
 )
-from PySide2.QtCore import (
+from PySide6.QtCore import (
     QSignalBlocker,
     Qt,
     Signal,
 )
-from PySide2.QtGui import (
+from PySide6.QtGui import (
     QColor,
     # QValidator,      # TEMP: Expression を実装するときに使用する.
     QDoubleValidator,  # TEMP: Expression を実装したら使用しなくなる.
@@ -21,7 +21,7 @@ from PySide2.QtGui import (
     QPainter,
     QPixmap,
 )
-from PySide2.QtWidgets import (
+from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
     QFileDialog,
@@ -41,12 +41,14 @@ class AssetWidget(QWidget):
         super().__init__(parent)
         self._layout = QHBoxLayout(self)
         self._openAsset = QPushButton("", self)
-        self._openAsset.setIcon(QIcon(self.style().standardIcon(QStyle.SP_ArrowForward)))
+        self._openAsset.setIcon(
+            QIcon(self.style().standardIcon(QStyle.SP_ArrowForward))
+        )
         self._openAsset.clicked.connect(self.handlerAssetPicker)
         self._assetPath = QLineEdit(self)
         self._layout.addWidget(self._openAsset)
         self._layout.addWidget(self._assetPath)
-        self._layout.setMargin(0)
+        self._layout.setContentsMargins(0, 0, 0, 0)
 
         self.setLayout(self._layout)
         self._assetPath.textChanged.connect(self._onTextChanged)

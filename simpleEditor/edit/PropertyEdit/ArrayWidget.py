@@ -2,9 +2,9 @@
 
 
 from pxr import Sdf
-from PySide2.QtCore import QAbstractTableModel, Qt
-from PySide2.QtGui import QBrush, QColor
-from PySide2.QtWidgets import (
+from PySide6.QtCore import QAbstractTableModel, Qt
+from PySide6.QtGui import QBrush, QColor
+from PySide6.QtWidgets import (
     QTableView,
     QWidget,
 )
@@ -79,7 +79,12 @@ class ArrayValueTableModel(QAbstractTableModel):
     def flags(self, index):
         if index.isValid():
             if index.column() == 0:
-                return Qt.ItemIsSelectable | Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemNeverHasChildren
+                return (
+                    Qt.ItemIsSelectable
+                    | Qt.ItemIsEditable
+                    | Qt.ItemIsEnabled
+                    | Qt.ItemNeverHasChildren
+                )
         return Qt.NoItemFlags
 
     def setData(self, index, value, role):

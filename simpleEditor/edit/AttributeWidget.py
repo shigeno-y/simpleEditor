@@ -45,6 +45,7 @@ _type2widget = {
     Sdf.ValueTypeNames.Token: TokenWidget,
     Sdf.ValueTypeNames.Bool: BoolWidget,
     Sdf.ValueTypeNames.Color3f: ColorPickerWidget,
+    Sdf.ValueTypeNames.Color4f: ColorPickerWidget,
 }
 
 _type2defaultValue = {

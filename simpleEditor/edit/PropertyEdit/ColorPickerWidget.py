@@ -129,7 +129,7 @@ class ColorPickerWidget(QWidget):
             self.setValue(self._attr.Get(self._currentTime))
 
     def handlerColorPicker(self):
-        c = QColorDialog.getColor(QColor(QColor.ExtendedRgb, *self.value()))
+        c = QColorDialog.getColor(QColor.fromRgbF(*self.value()))
         if c is not None:
             col = c.toRgb()
             self.setValue(Gf.Vec3f(col.redF(), col.greenF(), col.blueF()))

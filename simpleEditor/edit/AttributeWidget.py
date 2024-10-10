@@ -166,6 +166,16 @@ class AttributeWidget(QWidget):
 
     def setCurrentTime(self, currentTime):
         self._currentTime = currentTime
+
+        ct = self._attr.GetTimeSamplesInInterval(Gf.Interval(self._currentTime))
+        ts = self._attr.GetTimeSamples()
+        if ct is not None and len(ct) == 1:
+            # we have timesample at this timecode!
+            self._widget.setStyleSheet("background-color: #b58900;")
+        elif ts is not None and len(ts) > 0:
+            # we have at least 1 timesample somewhere
+            self._widget.setStyleSheet("background-color: #859900;")
+
         self._sync()
 
     def labelText(self, defaultValue):

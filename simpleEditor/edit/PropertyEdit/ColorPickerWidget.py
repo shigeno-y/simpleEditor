@@ -1,9 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from pxr import (
-    Gf,
-)
+from pxr import Gf, Sdf
 from PySide6.QtCore import (
     QSignalBlocker,
     Qt,
@@ -38,6 +36,7 @@ from .SignalBlocker import SignalBlocker
 class ColorPickerWidget(QWidget):
     def __init__(self, attr, currentTime, parent):
         super().__init__(parent)
+        self._attr = attr
         self._layout = QHBoxLayout(self)
         self._openColorPicker = QPushButton("", self)
         self._openColorPicker.setIcon(
@@ -57,7 +56,13 @@ class ColorPickerWidget(QWidget):
         self._widgetR.valueChanged.connect(self._onValueChanged)
         self._widgetG.valueChanged.connect(self._onValueChanged)
         self._widgetB.valueChanged.connect(self._onValueChanged)
-        self._attr = attr
+        if self._attr.GetTypeName() == Sdf.ValueTypeNames.Color4f:
+            self._widgetA = ExpressionFloatLineEdit(self)
+            self._layout.addWidget(self._widgetA)
+            self._widgetA.valueChanged.connect(self._onValueChanged)
+
+        self.setLayout(self._layout)
+
         self._copiedFromBase = False
         self._currentTime = currentTime
         self.sync(self._currentTime)
@@ -111,9 +116,17 @@ class ColorPickerWidget(QWidget):
             self._attr.Set(self.value())
 
     def value(self):
-        return Gf.Vec3f(
-            self._widgetR.value(), self._widgetG.value(), self._widgetB.value()
-        )
+        if self._attr.GetTypeName() == Sdf.ValueTypeNames.Color3f:
+            return Gf.Vec3f(
+                self._widgetR.value(), self._widgetG.value(), self._widgetB.value()
+            )
+        elif self._attr.GetTypeName() == Sdf.ValueTypeNames.Color4f:
+            return Gf.Vec4f(
+                self._widgetR.value(),
+                self._widgetG.value(),
+                self._widgetB.value(),
+                self._widgetA.value(),
+            )
 
     def setValue(self, value):
         with SignalBlocker(self._widgetR):
@@ -122,15 +135,28 @@ class ColorPickerWidget(QWidget):
             self._widgetG.setValue(value[1])
         with SignalBlocker(self._widgetB):
             self._widgetB.setValue(value[2])
+        if self._attr.GetTypeName() == Sdf.ValueTypeNames.Color4f:
+            with SignalBlocker(self._widgetA):
+                self._widgetA.setValue(value[3])
 
     def sync(self, currentTime):
         self._currentTime = currentTime
         with SignalBlocker(self):
-            self.setValue(self._attr.Get(self._currentTime))
+            val = self._attr.Get(self._currentTime)
+            if val is not None:
+                self.setValue(val)
 
     def handlerColorPicker(self):
-        c = QColorDialog.getColor(QColor.fromRgbF(*self.value()))
+        options = 0
+        if self._attr.GetTypeName() == Sdf.ValueTypeNames.Color4f:
+            options = QColorDialog.ColorDialogOption.ShowAlphaChannel
+
+        c = QColorDialog.getColor(QColor.fromRgbF(*self.value()), options=options)
         if c is not None:
-            col = c.toRgb()
-            self.setValue(Gf.Vec3f(col.redF(), col.greenF(), col.blueF()))
+            cc = c.toRgb()
+            if self._attr.GetTypeName() == Sdf.ValueTypeNames.Color3f:
+                self.setValue(Gf.Vec3f(cc.redF(), cc.greenF(), cc.blueF()))
+            elif self._attr.GetTypeName() == Sdf.ValueTypeNames.Color4f:
+                self.setValue(Gf.Vec4f(cc.redF(), cc.greenF(), cc.blueF(), cc.alphaF()))
+
             self._onValueChanged(None)

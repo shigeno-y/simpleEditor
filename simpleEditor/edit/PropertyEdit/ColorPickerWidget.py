@@ -147,7 +147,7 @@ class ColorPickerWidget(QWidget):
                 self.setValue(val)
 
     def handlerColorPicker(self):
-        options = 0
+        options = QColorDialog.ColorDialogOption()
         if self._attr.GetTypeName() == Sdf.ValueTypeNames.Color4f:
             options = QColorDialog.ColorDialogOption.ShowAlphaChannel
 

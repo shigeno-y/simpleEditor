@@ -13,3 +13,4 @@ from .TokenWidget import TokenWidget
 from .UIntWidget import UIntWidget
 from .UnsupportedAttributeWidget import UnsupportedAttributeWidget
 from .XformOpWidget import XformOpWidget
+from .QuartanionWidget import QuartanionWidget

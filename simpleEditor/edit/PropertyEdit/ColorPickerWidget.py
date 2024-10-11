@@ -32,6 +32,7 @@ from PySide6.QtWidgets import (
 from .ExpressionFloatLineEdit import ExpressionFloatLineEdit
 from .SignalBlocker import SignalBlocker
 
+from .util import shouldSetAsTimesamples
 
 class ColorPickerWidget(QWidget):
     def __init__(self, attr, currentTime, parent):
@@ -68,7 +69,9 @@ class ColorPickerWidget(QWidget):
         self.sync(self._currentTime)
 
     def _onValueChanged(self, _):
-        if self._attr.IsAuthored() and self._attr.GetNumTimeSamples() > 0:
+        value = self.value()
+        
+        if shouldSetAsTimesamples(self._attr):
             timesamples = dict()
 
             if not self._copiedFromBase:
@@ -113,7 +116,7 @@ class ColorPickerWidget(QWidget):
             for t, v in timesamples.items():
                 self._attr.Set(v, t)
         else:
-            self._attr.Set(self.value())
+            self._attr.Set(value)
 
     def value(self):
         if self._attr.GetTypeName() == Sdf.ValueTypeNames.Color3f:

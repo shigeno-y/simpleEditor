@@ -114,6 +114,7 @@ class SimpleEditWindow(QDockWidget):
 
         self.__api = usdviewApi
         self.__currentTarget = "/"
+        self.__api.stage.SetFramesPerSecond(self.__api.stage.GetTimeCodesPerSecond())
 
         self.__api.dataModel.selection.signalPrimSelectionChanged.connect(
             self.slotPrimSelectionChanged

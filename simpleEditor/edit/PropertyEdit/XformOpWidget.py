@@ -18,6 +18,8 @@ from simpleEditor.edit.resources.icons import getIcon
 from .AddXformOpDialog import AddXformOpDialog
 from .SignalBlocker import SignalBlocker
 
+from .util import updateBackgroundColorOnTimeSamples
+
 
 class XformOpWidget(QWidget):
     def __init__(self, attr, currentTime, parent):
@@ -88,13 +90,16 @@ class XformOpWidget(QWidget):
                 self._ops.append(
                     (op, opWidget, fwdButton, backButton, label, removeButton)
                 )
+                updateBackgroundColorOnTimeSamples(opWidget)
             self._layout.addWidget(self._addButton, rowCount, 2)
             self._layout.setColumnStretch(3, 1)
             self.layout().addWidget(self._rootWidget)
             self._opsDirty = False
         else:
             for op in self._ops:
-                op[1].getWidget().sync(currentTime)
+                opWidget = op[1].getWidget()
+                opWidget.sync(currentTime)
+                updateBackgroundColorOnTimeSamples(opWidget)
         self._currentTime = currentTime
 
     def _addXformOp(self):

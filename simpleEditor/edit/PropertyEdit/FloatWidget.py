@@ -14,6 +14,8 @@ from PySide6.QtWidgets import (
 from .ExpressionFloatLineEdit import ExpressionFloatLineEdit
 from .SignalBlocker import SignalBlocker
 
+from .util import updateValue
+
 _type2ReturnCls = {
     Sdf.ValueTypeNames.Double2: Gf.Vec2d,
     Sdf.ValueTypeNames.Double3: Gf.Vec3d,
@@ -29,12 +31,17 @@ class FloatWidget(ExpressionFloatLineEdit):
         super().__init__(parent)
         self.valueChanged.connect(self._onValueChanged)
         self._attr = attr
+        self._do_copy = True
+        self._currentTime = currentTime
         self.sync(currentTime)
 
-    def _onValueChanged(self, value):
-        self._attr.Set(value)
+    def _onValueChanged(self, _):
+        value = self.value()
+        updateValue(self._attr, value, self._currentTime, self._do_copy)
+        self._do_copy = False
 
     def sync(self, currentTime):
+        self._currentTime = currentTime
         with SignalBlocker(self):
             value = self._attr.Get(currentTime)
             if value is not None:
@@ -56,11 +63,13 @@ class Float2Widget(QWidget):
         self._widgetX.valueChanged.connect(self._onValueChanged)
         self._widgetY.valueChanged.connect(self._onValueChanged)
         self._attr = attr
+        self._do_copy = True
+        self._currentTime = currentTime
         self.sync(currentTime)
 
     def _onValueChanged(self, _):
         value = self.value()
-        self._attr.Set(value)
+        updateValue(self._attr, value, self._currentTime, self._do_copy)
         self.valueChanged.emit(value[0], value[1])
 
     def value(self):
@@ -75,6 +84,7 @@ class Float2Widget(QWidget):
             self._widgetY.setValue(value[1])
 
     def sync(self, currentTime):
+        self._currentTime = currentTime
         with SignalBlocker(self):
             value = self._attr.Get(currentTime)
             if value is not None:
@@ -99,11 +109,13 @@ class Float3Widget(QWidget):
         self._widgetY.valueChanged.connect(self._onValueChanged)
         self._widgetZ.valueChanged.connect(self._onValueChanged)
         self._attr = attr
+        self._do_copy = True
+        self._currentTime = currentTime
         self.sync(currentTime)
 
     def _onValueChanged(self, _):
         value = self.value()
-        self._attr.Set(value)
+        updateValue(self._attr, value, self._currentTime, self._do_copy)
         self.valueChanged.emit(value[0], value[1], value[2])
 
     def value(self):
@@ -120,6 +132,7 @@ class Float3Widget(QWidget):
             self._widgetZ.setValue(value[2])
 
     def sync(self, currentTime):
+        self._currentTime = currentTime
         with SignalBlocker(self):
             value = self._attr.Get(currentTime)
             if value is not None:
@@ -147,11 +160,13 @@ class Float4Widget(QWidget):
         self._widgetZ.valueChanged.connect(self._onValueChanged)
         self._widgetW.valueChanged.connect(self._onValueChanged)
         self._attr = attr
+        self._do_copy = True
+        self._currentTime = currentTime
         self.sync(currentTime)
 
     def _onValueChanged(self, _):
         value = self.value()
-        self._attr.Set(value)
+        updateValue(self._attr, value, self._currentTime, self._do_copy)
         self.valueChanged.emit(value[0], value[1], value[2], value[3])
 
     def value(self):
@@ -173,6 +188,7 @@ class Float4Widget(QWidget):
             self._widgetW.setValue(value[3])
 
     def sync(self, currentTime):
+        self._currentTime = currentTime
         with SignalBlocker(self):
             value = self._attr.Get(currentTime)
             if value is not None:

@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from pxr import Sdf
+from pxr import Sdf, Tf, Usd
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QDockWidget,
@@ -33,10 +33,6 @@ _type2degrees = {
 }
 
 
-def debug(*args, **kwargs):
-    print(*args, **kwargs)
-
-
 class GraphEditWindow(QDockWidget):
     def __init__(self, parent=None, *args, usdviewApi, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -61,8 +57,11 @@ class GraphEditWindow(QDockWidget):
         self.__layout.addWidget(self.__scroll)
 
         self.__widget = pyqtgraph.PlotWidget(parent=self.__scroll)
-        self.__scroll.setWidget(self.__widget)
-
+        self.__timeCodeBar = pyqtgraph.InfiniteLine(
+            movable=False,
+            angle=90,
+            labelOpts={'position':0.1, 'color': (200,200,100), 'fill': (200,200,200,50), 'movable': False})
+        self.__scroll.setWidget(self.__widget)        
         self.__api = usdviewApi
         self.__currentTarget = None
         self.__api.stage.SetFramesPerSecond(self.__api.stage.GetTimeCodesPerSecond())
@@ -70,25 +69,32 @@ class GraphEditWindow(QDockWidget):
         self.__api.dataModel.selection.signalComputedPropSelectionChanged.connect(
             self.slotPropSelectionChanged
         )
+        self.__api._UsdviewApi__appController._ui.frameSlider.valueChanged.connect(
+            self.slotTimecodeChanged
+        )
+
+        self.__eventListener = Tf.Notice.RegisterGlobally(Usd.Notice.StageContentsChanged, self.update)
 
     def slotPropSelectionChanged(self, *args, **kwargs):
-        newPropPath = None
         if self.__api.property is not None:
-            newPropPath = self.__api.property.GetPath()
-            self.update(newPropPath)
+            self.__currentTarget = self.__api.property.GetPath()
+            self.setWindowTitle(str(self.__currentTarget))
+            self.update()
         else:
             self.update()
 
+    def slotTimecodeChanged(self, newTimecode):
+        self._updateTimeCodeBar(newTimecode)
+
     def _updateGraph(self, xs, ys, degrees):
         plot = self.__widget.getPlotItem()
-        plot.clear()
+        #plot.clear()
 
         legend = plot.addLegend(offset=(10, 10))
         legend.clear()
 
         if len(degrees) == 1:
-            series = plot.plot(x=xs, y=ys, name=degrees[0], symbol="x")
-            series.sigPointsClicked.connect(debug)
+            series = plot.plot(x=xs, y=ys, name=degrees[0], clear=True)
         else:
             colors = ["r", "g", "b", "w"]
             for d, label in enumerate(degrees):
@@ -98,22 +104,22 @@ class GraphEditWindow(QDockWidget):
                     y=[v[d] for v in ys],
                     name=label,
                     pen=pen,
-                    symbol="x",
+                    clear= True if d==0 else False
                 )
-                series.sigPointsClicked.connect(debug)
 
-    def update(self, newPropPath=None, time=None):
-        if newPropPath is None:
-            newPropPath = self.__currentTarget
+        self.__widget.addItem(self.__timeCodeBar)
+
+    def _updateTimeCodeBar(self, time:float):
+        self.__timeCodeBar.setPos(time)
+
+
+    def update(self, *args, time=None, **kwargs):
         if time is None:
             time = self.__api.frame.GetValue()
-        if self.__currentTarget != newPropPath:
-            self.__currentTarget = newPropPath
-            self.setWindowTitle(str(self.__currentTarget))
 
         if self.__currentTarget:
-            prop = self.__api.stage.GetAttributeAtPath(newPropPath)
-            if prop and prop.GetTypeName() not in _type2degrees:
+            prop = self.__api.stage.GetAttributeAtPath(self.__currentTarget)
+            if prop is None or prop.GetTypeName() not in _type2degrees:
                 # no graph repl
                 return
 

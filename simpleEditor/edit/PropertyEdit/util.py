@@ -24,8 +24,6 @@ def hasTimeSamplesAtTimeCode(attr: Usd.Attribute, t: Usd.TimeCode):
 def updateValue(
     attr: Usd.Attribute, value, current_time: Usd.TimeCode, do_copy: bool = False
 ):
-    from pprint import pprint
-
     if shouldSetAsTimesamples(attr):
         if do_copy:
             timesamples = dict()
@@ -37,12 +35,8 @@ def updateValue(
 
             for t, v in timesamples.items():
                 attr.Set(v, t)
-            print(attr, "INITIAL")
-            pprint(timesamples)
 
         attr.Set(value, current_time)
-        print(attr)
-        pprint({t: attr.Get(t) for t in attr.GetTimeSamples()})
 
     else:
         attr.Set(value)

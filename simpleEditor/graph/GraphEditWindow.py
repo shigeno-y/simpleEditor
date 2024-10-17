@@ -60,8 +60,14 @@ class GraphEditWindow(QDockWidget):
         self.__timeCodeBar = pyqtgraph.InfiniteLine(
             movable=False,
             angle=90,
-            labelOpts={'position':0.1, 'color': (200,200,100), 'fill': (200,200,200,50), 'movable': False})
-        self.__scroll.setWidget(self.__widget)        
+            labelOpts={
+                "position": 0.1,
+                "color": (200, 200, 100),
+                "fill": (200, 200, 200, 50),
+                "movable": False,
+            },
+        )
+        self.__scroll.setWidget(self.__widget)
         self.__api = usdviewApi
         self.__currentTarget = None
         self.__api.stage.SetFramesPerSecond(self.__api.stage.GetTimeCodesPerSecond())
@@ -73,7 +79,9 @@ class GraphEditWindow(QDockWidget):
             self.slotTimecodeChanged
         )
 
-        self.__eventListener = Tf.Notice.RegisterGlobally(Usd.Notice.StageContentsChanged, self.update)
+        self.__eventListener = Tf.Notice.RegisterGlobally(
+            Usd.Notice.StageContentsChanged, self.update
+        )
 
     def slotPropSelectionChanged(self, *args, **kwargs):
         if self.__api.property is not None:
@@ -88,13 +96,18 @@ class GraphEditWindow(QDockWidget):
 
     def _updateGraph(self, xs, ys, degrees):
         plot = self.__widget.getPlotItem()
-        #plot.clear()
+        # plot.clear()
 
         legend = plot.addLegend(offset=(10, 10))
         legend.clear()
 
+        interpolationType = self.__api.stage.GetInterpolationType()
+        stepMode = "left" if interpolationType == Usd.InterpolationTypeHeld else None
+
         if len(degrees) == 1:
-            series = plot.plot(x=xs, y=ys, name=degrees[0], clear=True)
+            series = plot.plot(
+                x=xs, y=ys, name=degrees[0], clear=True, stepMode=stepMode
+            )
         else:
             colors = ["r", "g", "b", "w"]
             for d, label in enumerate(degrees):
@@ -104,14 +117,14 @@ class GraphEditWindow(QDockWidget):
                     y=[v[d] for v in ys],
                     name=label,
                     pen=pen,
-                    clear= True if d==0 else False
+                    clear=True if d == 0 else False,
+                    stepMode=stepMode,
                 )
 
         self.__widget.addItem(self.__timeCodeBar)
 
-    def _updateTimeCodeBar(self, time:float):
+    def _updateTimeCodeBar(self, time: float):
         self.__timeCodeBar.setPos(time)
-
 
     def update(self, *args, time=None, **kwargs):
         if time is None:

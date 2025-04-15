@@ -32,6 +32,8 @@ from PySide6.QtWidgets import (
 from .ExpressionFloatLineEdit import ExpressionFloatLineEdit
 from .SignalBlocker import SignalBlocker
 
+from .util import updateValue
+
 
 class ColorPickerWidget(QWidget):
     def __init__(self, attr, currentTime, parent):
@@ -63,57 +65,14 @@ class ColorPickerWidget(QWidget):
 
         self.setLayout(self._layout)
 
-        self._copiedFromBase = False
+        self._do_copy = True
         self._currentTime = currentTime
         self.sync(self._currentTime)
 
     def _onValueChanged(self, _):
-        if self._attr.IsAuthored() and self._attr.GetNumTimeSamples() > 0:
-            timesamples = dict()
-
-            if not self._copiedFromBase:
-                self._copiedFromBase = True
-                start = self._attr.GetStage().GetStartTimeCode()
-                end = self._attr.GetStage().GetEndTimeCode()
-                current = start
-
-                while current < end:
-                    # 1) If a sample exists at the desiredTime, set both upper and lower to desiredTime.
-                    # 2) If samples exist surrounding, but not equal to the desiredTime, set lower and upper to the bracketing samples nearest to the desiredTime.
-                    # 3) If the desiredTime is outside of the range of authored samples, clamp upper and lower to the nearest time sample.
-                    # 4) If no samples exist, do not modify upper and lower and set hasTimeSamples to false.
-                    range = self._attr.GetBracketingTimeSamples(current)
-
-                    # case 4
-                    if range is None:
-                        break
-
-                    # case 1
-                    if current == range[0] and current == range[1]:
-                        timesamples[range[1]] = self._attr.Get(range[1])
-
-                    # case 2
-                    if range[0] < current and current < range[1]:
-                        timesamples[range[0]] = self._attr.Get(range[0])
-                        timesamples[range[1]] = self._attr.Get(range[1])
-
-                    # case 3, timesamples is latter than current
-                    if range[0] == range[1] and current < range[0]:
-                        timesamples[range[1]] = self._attr.Get(range[1])
-
-                    # case 3, timesamples is earlier than current
-                    # no more timesamples in latter
-                    if range[0] == range[1] and range[1] < current:
-                        break
-
-                    current = range[1] + 0.1
-
-            timesamples[self._currentTime] = self.value()
-
-            for t, v in timesamples.items():
-                self._attr.Set(v, t)
-        else:
-            self._attr.Set(self.value())
+        value = self.value()
+        updateValue(self._attr, value, self._currentTime, self._do_copy)
+        self._do_copy = False
 
     def value(self):
         if self._attr.GetTypeName() == Sdf.ValueTypeNames.Color3f:
@@ -147,7 +106,7 @@ class ColorPickerWidget(QWidget):
                 self.setValue(val)
 
     def handlerColorPicker(self):
-        options = 0
+        options = QColorDialog.ColorDialogOption()
         if self._attr.GetTypeName() == Sdf.ValueTypeNames.Color4f:
             options = QColorDialog.ColorDialogOption.ShowAlphaChannel
 

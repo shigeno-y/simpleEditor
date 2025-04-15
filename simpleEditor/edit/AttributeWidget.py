@@ -27,6 +27,7 @@ from .PropertyEdit import (
     UIntWidget,
     UnsupportedAttributeWidget,
     XformOpWidget,
+    QuartanionWidget,
 )
 
 _type2widget = {
@@ -46,6 +47,9 @@ _type2widget = {
     Sdf.ValueTypeNames.Bool: BoolWidget,
     Sdf.ValueTypeNames.Color3f: ColorPickerWidget,
     Sdf.ValueTypeNames.Color4f: ColorPickerWidget,
+    Sdf.ValueTypeNames.Quatd: QuartanionWidget,
+    Sdf.ValueTypeNames.Quatf: QuartanionWidget,
+    Sdf.ValueTypeNames.Quath: QuartanionWidget,
 }
 
 _type2defaultValue = {
@@ -64,6 +68,10 @@ _type2defaultValue = {
     Sdf.ValueTypeNames.Token: "",
     Sdf.ValueTypeNames.Bool: False,
     Sdf.ValueTypeNames.Color3f: Gf.Vec3f(),
+    Sdf.ValueTypeNames.Color4f: Gf.Vec4f(),
+    Sdf.ValueTypeNames.Quatd: Gf.Quatd.GetIdentity(),
+    Sdf.ValueTypeNames.Quatf: Gf.Quatf.GetIdentity(),
+    Sdf.ValueTypeNames.Quath: Gf.Quath.GetIdentity(),
 }
 
 
@@ -165,7 +173,10 @@ class AttributeWidget(QWidget):
         return self._widget
 
     def setCurrentTime(self, currentTime):
+        from .PropertyEdit.util import updateBackgroundColorOnTimeSamples
+
         self._currentTime = currentTime
+        updateBackgroundColorOnTimeSamples(self)
         self._sync()
 
     def labelText(self, defaultValue):

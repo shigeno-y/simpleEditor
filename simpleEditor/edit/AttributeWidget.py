@@ -17,6 +17,7 @@ from .PropertyEdit import (
     AssetWidget,
     BoolWidget,
     ColorPickerWidget,
+    ConnectionWidget,
     Float2Widget,
     Float3Widget,
     Float4Widget,
@@ -106,12 +107,17 @@ class AttributeWidget(QWidget):
             # xformOpOrder の特殊対応
             widgetClass = XformOpWidget
         else:
-            typeName = attr.GetTypeName()
-            if typeName in _type2widget:
-                widgetClass = _type2widget[typeName]
-            elif typeName.isArray and typeName.scalarType in _type2widget:
-                widgetClass = ArrayWidget
-                widgetArgs.append(_type2widget[typeName.scalarType])
+            connections = attr.GetConnections()
+            if len(connections) > 0:
+                # connection の特別対応
+                widgetClass = ConnectionWidget
+            else:
+                typeName = attr.GetTypeName()
+                if typeName in _type2widget:
+                    widgetClass = _type2widget[typeName]
+                elif typeName.isArray and typeName.scalarType in _type2widget:
+                    widgetClass = ArrayWidget
+                    widgetArgs.append(_type2widget[typeName.scalarType])
         self._widget = widgetClass(*widgetArgs)
         self._stackedWidget.addWidget(self._widget)
         self._widget.setVisible(False)

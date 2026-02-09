@@ -1,7 +1,22 @@
-[lint]
-select = ["E", "F", "I", "W"]
-unfixable = ["F401", "F841"]
-line-length = 119
+[project]
+name = "simpleeditor"
+dynamic = ["version"]
+description = "Simple editor for usd (usdview)"
+readme = "LICENSE.txt"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy~=2.3.0",
+    "pyqtgraph>=0.14.0",
+]
 
-[lint.isort]
-force-single-line = false
+[dependency-groups]
+dev = [
+    "ruff>=0.15.0",
+]
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"

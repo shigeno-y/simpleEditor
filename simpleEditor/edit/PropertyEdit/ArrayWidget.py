@@ -35,6 +35,12 @@ class ArrayValueTableModel(QAbstractTableModel):
         self._currentTime = currentTime
         self._values = list()
 
+        self._originalJP = None
+        if self._attr.GetName() == "jointNames":
+            self._originalJP = self._attr.GetCustomDataByKey("usdmmdplugins")[
+                "originalJP"
+            ]
+
     def updateTime(self, currentTime):
         self._currentTime = currentTime
         self.beginResetModel()
@@ -58,6 +64,8 @@ class ArrayValueTableModel(QAbstractTableModel):
             row = index.row()
             if row < len(self._values):
                 if role == Qt.DisplayRole:
+                    if self._originalJP is not None:
+                        return self._originalJP[row]
                     return self._stringifier(self._values[row])
                 if role == Qt.UserRole:
                     return self._values[row]

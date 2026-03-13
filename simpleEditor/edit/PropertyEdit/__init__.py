@@ -5,6 +5,7 @@ from .ArrayWidget import ArrayWidget
 from .AssetWidget import AssetWidget
 from .BoolWidget import BoolWidget
 from .ColorPickerWidget import ColorPickerWidget
+from .ConnectionWidget import ConnectionWidget
 from .FloatWidget import Float2Widget, Float3Widget, Float4Widget, FloatWidget
 from .IntWidget import IntWidget
 from .StringWidget import StringWidget
